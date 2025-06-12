@@ -10,15 +10,19 @@ import com.group2.ADN.dto.LoginRequest;
 import com.group2.ADN.dto.PendingRegisterRequest;
 import com.group2.ADN.dto.RegisterRequest;
 import com.group2.ADN.entity.User;
+import com.group2.ADN.repository.UserRepository;
 import com.group2.ADN.service.AuthService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.server.ResponseStatusException;
 
 @SecurityRequirement(name = "bearerAuth")
 @RestController
@@ -27,6 +31,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class AuthController {
 
     private final AuthService authService;
+    @Autowired
+    private UserRepository userRepository;
 
    // @PostMapping("/register")
   //  public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
@@ -58,16 +64,20 @@ public class AuthController {
     public ResponseEntity<?> getCurrentUser(Authentication authentication) {
         String email = authentication.getName();
 
-        // Lấy role đầu tiên (vì mỗi user chỉ có 1 role)
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy người dùng"));
+
         String role = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)         // ví dụ: "ROLE_CUSTOMER"
-                .map(r -> r.replace("ROLE_", ""))            // → "CUSTOMER"
+                .map(GrantedAuthority::getAuthority)
+                .map(r -> r.replace("ROLE_", ""))
                 .findFirst()
                 .orElse("UNKNOWN");
 
         Map<String, Object> response = new HashMap<>();
         response.put("email", email);
-        response.put("role", role); // 👈 Trả về 1 chuỗi duy nhất
+        response.put("role", role);
+        response.put("fullName", user.getFullName());
+        response.put("phone", user.getPhone());  // ✅ Thêm số điện thoại
 
         return ResponseEntity.ok(response);
     }
