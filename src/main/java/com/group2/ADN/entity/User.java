@@ -36,7 +36,7 @@ public class User {
     private UserRole role;
 
 
-    @Column(name = "wallet_balance", nullable = false, columnDefinition = "decimal(19,2) default 0")
+    @Column(name = "wallet_balance", insertable = false, updatable = false)
     private BigDecimal walletBalance = BigDecimal.ZERO;
 
 }
