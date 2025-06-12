@@ -78,6 +78,7 @@ public class AuthController {
         response.put("role", role);
         response.put("fullName", user.getFullName());
         response.put("phone", user.getPhone());  // ✅ Thêm số điện thoại
+        response.put("walletBalance", user.getWalletBalance());
 
         return ResponseEntity.ok(response);
     }
