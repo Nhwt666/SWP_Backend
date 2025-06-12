@@ -1,5 +1,7 @@
 package com.group2.ADN.controller;
 
+import com.group2.ADN.entity.User;
+import com.group2.ADN.repository.UserRepository;
 import com.group2.ADN.service.PayPalService;
 import com.group2.ADN.service.UserService;
 import com.paypal.api.payments.Links;
@@ -9,6 +11,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -24,24 +28,46 @@ public class PayPalController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private UserRepository userRepository;
     @PostMapping("/pay")
-    public ResponseEntity<?> pay(@RequestParam double amount, @RequestParam Long userId) {
+    public ResponseEntity<?> pay(@RequestParam double amount) {
         try {
-            Payment payment = payPalService.createPayment(amount, "USD", "paypal",
-                    "sale", "Top-up ADN Wallet",
-                    "http://localhost:8080/api/paypal/cancel",
-                    "http://localhost:8080/api/paypal/success?userId=" + userId + "&amount=" + amount);
+            // Lấy email từ người dùng đang đăng nhập (JWT)
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String email = authentication.getName();
 
+            // Tìm user theo email
+            User user = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            // Tạo payment
+            Payment payment = payPalService.createPayment(
+                    amount,
+                    "USD",
+                    "paypal",
+                    "sale",
+                    "Top-up ADN Wallet",
+                    "http://localhost:8080/api/paypal/cancel",
+                    "http://localhost:8080/api/paypal/success?userId=" + user.getId() + "&amount=" + amount
+            );
+
+            // Lấy approval link
             for (Links link : payment.getLinks()) {
                 if (link.getRel().equals("approval_url")) {
                     return ResponseEntity.ok(link.getHref());
                 }
             }
+
         } catch (PayPalRESTException e) {
             e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error while processing payment");
         }
+
         return ResponseEntity.badRequest().body("Error while processing payment");
     }
+
 
     @GetMapping("/success")
     public void success(@RequestParam String paymentId,
