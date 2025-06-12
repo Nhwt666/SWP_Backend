@@ -62,12 +62,20 @@ public class AuthService {
     }
 
     public void requestRegister(PendingRegisterRequest request) {
+        // ✅ Kiểm tra nếu email đã được dùng
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email đã được sử dụng");
+        }
+
+        if (pendingRegisterRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email đang chờ xác nhận, vui lòng kiểm tra email");
+        }
+
+        // ✅ Sinh OTP và lưu pending register
         String otp = String.format("%06d", new Random().nextInt(1000000));
         LocalDateTime expires = LocalDateTime.now().plusMinutes(5);
-
         String hashedPassword = passwordEncoder.encode(request.getPassword());
 
-        // Ghi đè nếu đã tồn tại
         PendingRegister pending = PendingRegister.builder()
                 .fullName(request.getFullName())
                 .email(request.getEmail())
@@ -79,12 +87,14 @@ public class AuthService {
                 .build();
 
         pendingRegisterRepository.save(pending);
-
-        mailService.sendOtpEmail(request.getEmail(), otp); // gửi OTP
+        mailService.sendOtpEmail(request.getEmail(), otp);
     }
 
 
     public void confirmRegister(String email, String otp) {
+        if (userRepository.findByEmail(email).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email đã xác nhận và tồn tại");
+        }
         PendingRegister pending = pendingRegisterRepository.findByEmailAndOtpAndVerifiedFalse(email, otp)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "OTP không đúng hoặc đã xác nhận"));
 
