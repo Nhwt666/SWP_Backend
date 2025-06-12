@@ -3,6 +3,8 @@ package com.group2.ADN.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "users")
 @Getter
@@ -32,5 +34,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole role;
+
+
+    @Column(name = "wallet_balance", nullable = false, columnDefinition = "decimal(19,2) default 0")
+    private BigDecimal walletBalance = BigDecimal.ZERO;
 
 }
