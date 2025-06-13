@@ -92,7 +92,21 @@ public class AuthController {
     @PostMapping("/confirm-register")
     public ResponseEntity<?> confirmRegister(@RequestParam String email, @RequestParam String otp) {
         authService.confirmRegister(email, otp);
-        return ResponseEntity.ok(Map.of("message", "Đăng ký thành công!"));
+
+        // 🔍 Tìm lại user đã lưu vào DB sau xác nhận
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy người dùng"));
+
+        // 🔑 Tạo token ngay sau khi đăng ký xong
+        String token = authService.generateToken(user);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Đăng ký thành công!");
+        response.put("token", token);
+        response.put("email", user.getEmail());
+        response.put("role", user.getRole().name());
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/request-reset")
