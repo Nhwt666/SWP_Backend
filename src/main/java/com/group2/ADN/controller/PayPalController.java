@@ -85,10 +85,10 @@ public class PayPalController {
             userService.topUpWallet(userId, BigDecimal.valueOf(amount));
             System.out.println("💰 Wallet updated!");
 
-            response.sendRedirect("http://localhost:3004/payment-success");
+            response.sendRedirect("http://localhost:4321/payment-success");
         } catch (PayPalRESTException e) {
             e.printStackTrace();
-            response.sendRedirect("http://localhost:3004/payment-failed");
+            response.sendRedirect("http://localhost:4321/payment-failed");
         }
     }
 
