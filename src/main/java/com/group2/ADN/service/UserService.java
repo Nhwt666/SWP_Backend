@@ -21,7 +21,11 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        user.setWalletBalance(user.getWalletBalance().add(amount));
+        BigDecimal currentBalance = user.getWalletBalance();
+        if (currentBalance == null) {
+            currentBalance = BigDecimal.ZERO;
+        }
+        user.setWalletBalance(currentBalance.add(amount));
         userRepository.save(user);
 
         System.out.println("✅ Wallet new balance: " + user.getWalletBalance());
