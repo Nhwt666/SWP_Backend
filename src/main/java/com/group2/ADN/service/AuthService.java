@@ -1,6 +1,6 @@
 package com.group2.ADN.service;
 
-import com.group2.ADN.dto.PendingRegisterRequest;
+import com.group2.ADN.dto.PendingRegisterRequest;import com.group2.ADN.dto.UpdatePasswordRequest;
 import com.group2.ADN.entity.PasswordResetRequest;
 import com.group2.ADN.entity.PendingRegister;
 
@@ -19,6 +19,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
@@ -132,51 +134,40 @@ public class AuthService {
         mailService.sendOtpEmail(email, otp);
     }
     // Xác nhận OTP từ email
-    public void confirmResetPassword(String email, String otp) {
-        // Lấy danh sách các yêu cầu reset hợp lệ
+    public void confirmResetPassword(String otp) {
         List<PasswordResetRequest> matches = passwordResetRequestRepository
-                .findAllByEmailAndOtpAndVerifiedFalse(email, otp);
+                .findByOtpAndVerifiedFalseAndExpiresAtGreaterThanEqualOrderByExpiresAtDesc(otp, LocalDateTime.now());
 
         if (matches.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "OTP không hợp lệ hoặc đã xác nhận");
         }
 
-        // Ưu tiên bản ghi mới nhất
-        PasswordResetRequest request = matches.stream()
-                .sorted(Comparator.comparing(PasswordResetRequest::getExpiresAt).reversed())
-                .findFirst()
-                .get();
-
-        if (request.getExpiresAt().isBefore(LocalDateTime.now())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "OTP đã hết hạn");
-        }
-
+        PasswordResetRequest request = matches.get(0);
         request.setVerified(true);
         passwordResetRequestRepository.save(request);
     }
-    public void updatePassword(String email, String newPassword) {
-        // Lấy danh sách các yêu cầu reset mật khẩu theo email, sắp xếp theo thời gian giảm dần
-        List<PasswordResetRequest> requests = passwordResetRequestRepository
-                .findByEmailAndVerifiedTrueOrderByExpiresAtDesc(email);
+    @PostMapping("/update-password")
+    public void updatePassword(@RequestBody UpdatePasswordRequest request) {
+        String otp = request.getOtp();
+        String newPassword = request.getNewPassword();
 
-        if (requests.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Không tìm thấy yêu cầu đặt lại mật khẩu");
-        }
+        List<PasswordResetRequest> verifiedRequests = passwordResetRequestRepository
+                .findByOtpAndVerifiedTrueAndExpiresAtGreaterThanEqualOrderByExpiresAtDesc(otp, LocalDateTime.now());
 
-        // Lấy bản ghi mới nhất
-        PasswordResetRequest request = requests.get(0);
-
-        if (!request.isVerified()) {
+        if (verifiedRequests.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "OTP chưa được xác nhận");
         }
 
-        User user = userRepository.findByEmail(email)
+        PasswordResetRequest resetRequest = verifiedRequests.get(0);
+
+        User user = userRepository.findByEmail(resetRequest.getEmail())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Người dùng không tồn tại"));
 
         user.setPasswordHash(passwordEncoder.encode(newPassword));
         userRepository.save(user);
 
-        // Xóa tất cả yêu cầu reset mật khẩu liên quan đến email này để đảm bảo an toàn
-        passwordResetRequestRepository.deleteAll(requests);
+        passwordResetRequestRepository.deleteAll(verifiedRequests);
     }
+
+
 }

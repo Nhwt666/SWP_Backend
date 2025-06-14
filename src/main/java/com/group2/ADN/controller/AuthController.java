@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import com.group2.ADN.dto.LoginRequest;
 import com.group2.ADN.dto.PendingRegisterRequest;
 import com.group2.ADN.dto.RegisterRequest;
+import com.group2.ADN.dto.UpdatePasswordRequest;
 import com.group2.ADN.entity.User;
 import com.group2.ADN.repository.UserRepository;
 import com.group2.ADN.service.AuthService;
@@ -116,14 +117,13 @@ public class AuthController {
     }
 
     @PostMapping("/confirm-reset")
-    public ResponseEntity<?> confirmReset(@RequestParam String email, @RequestParam String otp) {
-        authService.confirmResetPassword(email, otp);
+    public ResponseEntity<?> confirmReset(@RequestParam String otp) {
+        authService.confirmResetPassword(otp);
         return ResponseEntity.ok(Map.of("message", "Xác nhận OTP thành công"));
     }
 
     @PostMapping("/update-password")
-    public ResponseEntity<?> updatePassword(@RequestParam String email, @RequestParam String newPassword) {
-        authService.updatePassword(email, newPassword);
-        return ResponseEntity.ok(Map.of("message", "Mật khẩu đã được cập nhật"));
+    public void updatePassword(@RequestBody @Valid UpdatePasswordRequest request) {
+        authService.updatePassword(request);
     }
 }
