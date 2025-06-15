@@ -34,5 +34,4 @@ public class ValidationHandler {
         return ResponseEntity.status(ex.getStatusCode()).body(error);
     }
 
-A
 }
