@@ -1,11 +1,15 @@
 package com.group2.ADN.service;
 
+import com.group2.ADN.entity.TopUpHistory;
+import com.group2.ADN.repository.TopUpHistoryRepository;
 import com.paypal.api.payments.*;
 import com.paypal.base.rest.APIContext;
 import com.paypal.base.rest.PayPalRESTException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,5 +56,19 @@ public class PayPalService {
         PaymentExecution paymentExecution = new PaymentExecution();
         paymentExecution.setPayerId(payerId);
         return payment.execute(apiContext, paymentExecution);
+    }
+
+    @Autowired
+    private TopUpHistoryRepository topUpHistoryRepository;
+
+    public void saveTopUpHistory(Long userId, double amount, String paymentId, String payerId) {
+        TopUpHistory history = new TopUpHistory();
+        history.setUserId(userId);
+        history.setAmount(BigDecimal.valueOf(amount));
+        history.setCreatedAt(LocalDateTime.now());
+        history.setPaymentId(paymentId);
+        history.setPayerId(payerId);
+
+        topUpHistoryRepository.save(history);
     }
 }

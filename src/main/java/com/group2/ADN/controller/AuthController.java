@@ -80,6 +80,7 @@ public class AuthController {
         response.put("fullName", user.getFullName());
         response.put("phone", user.getPhone());  // ✅ Thêm số điện thoại
         response.put("walletBalance", user.getWalletBalance());
+        response.put("userId", user.getId());
 
         return ResponseEntity.ok(response);
     }

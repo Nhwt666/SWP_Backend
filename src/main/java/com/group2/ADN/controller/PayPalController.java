@@ -1,6 +1,8 @@
 package com.group2.ADN.controller;
 
+import com.group2.ADN.entity.TopUpHistory;
 import com.group2.ADN.entity.User;
+import com.group2.ADN.repository.TopUpHistoryRepository;
 import com.group2.ADN.repository.UserRepository;
 import com.group2.ADN.service.PayPalService;
 import com.group2.ADN.service.UserService;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/paypal")
@@ -30,6 +33,9 @@ public class PayPalController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private TopUpHistoryRepository topUpHistoryRepository;
     @PostMapping("/pay")
     public ResponseEntity<?> pay(@RequestParam double amount) {
         try {
@@ -83,13 +89,20 @@ public class PayPalController {
 
             payPalService.executePayment(paymentId, payerId);
             userService.topUpWallet(userId, BigDecimal.valueOf(amount));
-            System.out.println("💰 Wallet updated!");
+            payPalService.saveTopUpHistory(userId, amount, paymentId, payerId);  // <- thêm dòng này
+            System.out.println("💾 Lưu lịch sử nạp tiền thành công!");
 
             response.sendRedirect("http://localhost:4321/payment-success");
         } catch (PayPalRESTException e) {
             e.printStackTrace();
-            response.sendRedirect("http://localhost:4321/payment-failed");
+            response.sendRedirect("http://localhost:4322/payment-failed");
         }
+    }
+
+    @GetMapping("/topup-history")
+    public ResponseEntity<List<TopUpHistory>> getTopUpHistory(@RequestParam Long userId) {
+        List<TopUpHistory> history = topUpHistoryRepository.findByUserId(userId);
+        return ResponseEntity.ok(history);
     }
 
 }
