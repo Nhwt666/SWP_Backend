@@ -4,6 +4,7 @@ import com.group2.ADN.dto.PendingRegisterRequest;import com.group2.ADN.dto.Updat
 import com.group2.ADN.entity.PasswordResetRequest;
 import com.group2.ADN.entity.PendingRegister;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
@@ -49,6 +50,7 @@ public class AuthService {
                 .phone(request.getPhone())
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
                 .role(request.getRole())
+                .walletBalance(BigDecimal.ZERO)
                 .build();
 
         return userRepository.save(user);
@@ -110,6 +112,7 @@ public class AuthService {
                 .phone(pending.getPhone())
                 .passwordHash(pending.getPasswordHash())
                 .role(UserRole.CUSTOMER)
+                .walletBalance(BigDecimal.ZERO)
                 .build();
 
         userRepository.save(user);

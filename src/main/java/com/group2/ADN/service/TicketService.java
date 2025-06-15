@@ -1,9 +1,7 @@
 package com.group2.ADN.service;
 
-import com.group2.ADN.entity.Ticket;
-import com.group2.ADN.entity.TicketStatus;
-import com.group2.ADN.entity.User;
-import com.group2.ADN.entity.UserRole;
+import com.group2.ADN.dto.TicketRequest;
+import com.group2.ADN.entity.*;
 import com.group2.ADN.repository.TicketRepository;
 import com.group2.ADN.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -23,8 +21,24 @@ public class TicketService {
     @Autowired
     private UserRepository userRepository;
 
-    public Ticket createTicket(Ticket ticket) {
-        ticket.setStatus(TicketStatus.PENDING);
+    public Ticket createTicketFromRequest(TicketRequest request) {
+        Ticket ticket = new Ticket();
+
+        try {
+            ticket.setType(TicketType.valueOf(request.getType()));
+            ticket.setMethod(TestMethod.valueOf(request.getMethod()));
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid ticket type or method");
+        }
+
+        ticket.setReason(request.getReason());
+        ticket.setStatus(TicketStatus.PENDING);  // Default to PENDING or CHO_XU_LY
+
+        // Fetch customer
+        User customer = userRepository.findById(request.getCustomerId())
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
+        ticket.setCustomer(customer);
+
         return ticketRepository.save(ticket);
     }
 
@@ -49,7 +63,7 @@ public class TicketService {
             throw new RuntimeException("No staff available");
         }
 
-        User selectedStaff = staffList.get(0); // Basic: pick first staff
+        User selectedStaff = staffList.get(0); // Basic selection
         ticket.setStaff(selectedStaff);
         ticket.setStatus(TicketStatus.IN_PROGRESS);
 
@@ -62,5 +76,10 @@ public class TicketService {
 
         ticket.setStatus(newStatus);
         return ticketRepository.save(ticket);
+    }
+
+    public User findUserById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 }

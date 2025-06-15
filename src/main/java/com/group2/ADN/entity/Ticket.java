@@ -55,4 +55,13 @@ public class Ticket {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
+
+    @Column(length = 255)
+    private String address;
+
+    @Column(length = 20)
+    private String phone;
+
+    @Column(length = 100)
+    private String email;
 }

@@ -1,6 +1,6 @@
 package com.group2.ADN.controller;
 
-
+import com.group2.ADN.dto.TicketRequest;
 import com.group2.ADN.entity.Ticket;
 import com.group2.ADN.entity.TicketStatus;
 import com.group2.ADN.entity.User;
@@ -19,8 +19,8 @@ public class TicketController {
     private TicketService ticketService;
 
     @PostMapping
-    public ResponseEntity<Ticket> createTicket(@RequestBody Ticket ticket) {
-        Ticket ticketCreated = ticketService.createTicket(ticket);
+    public ResponseEntity<Ticket> createTicket(@RequestBody TicketRequest request) {
+        Ticket ticketCreated = ticketService.createTicketFromRequest(request);
         return ResponseEntity.ok(ticketCreated);
     }
 
@@ -45,7 +45,7 @@ public class TicketController {
 
     @GetMapping("/customer/{customerId}")
     public ResponseEntity<List<Ticket>> getTicketsByCustomer(@PathVariable Long customerId) {
-        User user = User.builder().id(customerId).build();
+        User user = ticketService.findUserById(customerId);
         return ResponseEntity.ok(ticketService.getTicketsByCustomer(user));
     }
 
@@ -53,5 +53,4 @@ public class TicketController {
     public ResponseEntity<List<Ticket>> getTicketsByStatus(@PathVariable TicketStatus status) {
         return ResponseEntity.ok(ticketService.getTicketsByStatus(status));
     }
-
 }
