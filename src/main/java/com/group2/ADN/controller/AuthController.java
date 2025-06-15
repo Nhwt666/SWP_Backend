@@ -81,6 +81,8 @@ public class AuthController {
         response.put("phone", user.getPhone());  // ✅ Thêm số điện thoại
         response.put("walletBalance", user.getWalletBalance());
         response.put("userId", user.getId());
+        response.put("address", user.getAddress());
+
 
         return ResponseEntity.ok(response);
     }
@@ -127,4 +129,6 @@ public class AuthController {
     public void updatePassword(@RequestBody @Valid UpdatePasswordRequest request) {
         authService.updatePassword(request);
     }
+
+
 }

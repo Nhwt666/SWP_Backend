@@ -39,4 +39,7 @@ public class User {
     @Column(name = "wallet_balance", nullable = false)
     private BigDecimal walletBalance = BigDecimal.ZERO;
 
+    @Column(length = 255)
+    private String address;
+
 }

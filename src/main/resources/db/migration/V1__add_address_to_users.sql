@@ -1,0 +1,2 @@
+ALTER TABLE users
+ADD address NVARCHAR(255)A NULL;
