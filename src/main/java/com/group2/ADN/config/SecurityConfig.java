@@ -34,11 +34,13 @@
                             .requestMatchers("/staff/**").hasRole("STAFF")
                             .requestMatchers("/admin/**").hasRole("ADMIN")
 
-                            .requestMatchers(HttpMethod.PUT, "/api/tickets/*/assign").hasAnyRole("STAFF", "ADMIN")
-                            .requestMatchers(HttpMethod.PUT, "/api/tickets/*/status").hasAnyRole("STAFF", "ADMIN")
+                            .requestMatchers(HttpMethod.PUT, "/tickets/*/assign").hasAnyRole("STAFF", "ADMIN")
+                            .requestMatchers(HttpMethod.PUT, "/tickets/*/status").hasAnyRole("STAFF", "ADMIN")
+                            .requestMatchers(HttpMethod.GET, "/tickets/**").hasAnyRole("CUSTOMER", "STAFF", "ADMIN")
 
-                            .requestMatchers(HttpMethod.GET, "/api/tickets/**").hasRole("CUSTOMER")
-                            .requestMatchers(HttpMethod.POST, "/api/tickets/**").hasRole("CUSTOMER")
+
+                            .requestMatchers(HttpMethod.GET, "/tickets/**").hasRole("CUSTOMER")
+                            .requestMatchers(HttpMethod.POST, "/tickets/**").hasRole("CUSTOMER")
 
                             .anyRequest().authenticated()
                     )
