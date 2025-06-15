@@ -1,5 +1,6 @@
 package com.group2.ADN.service;
 
+import com.group2.ADN.dto.UpdateProfileRequest;
 import com.group2.ADN.entity.User;
 import com.group2.ADN.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,4 +31,36 @@ public class UserService {
 
         System.out.println("✅ Wallet new balance: " + user.getWalletBalance());
     }
+
+    public void updateProfile(String email, UpdateProfileRequest request) {
+        System.out.println("==== Update Profile Called ====");
+        System.out.println("Email: " + email);
+        System.out.println("Request data: " + request);
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> {
+                    System.out.println("❌ User not found for email: " + email);
+                    return new RuntimeException("User not found");
+                });
+
+        if (request.getFullName() != null) {
+            System.out.println("Updating full name to: " + request.getFullName());
+            user.setFullName(request.getFullName());
+        }
+
+        if (request.getPhone() != null) {
+            System.out.println("Updating phone to: " + request.getPhone());
+            user.setPhone(request.getPhone());
+        }
+
+        if (request.getAddress() != null) {
+            System.out.println("Updating address to: " + request.getAddress());
+            user.setAddress(request.getAddress());
+        }
+
+        userRepository.save(user);
+        System.out.println("✅ Cập Nhật Thông Tin Thành Công");
+    }
+
+
 }
