@@ -24,4 +24,8 @@ public class TopUpHistory {
     private String paymentId;
 
     private String payerId;
+
+    private String paymentMethod;
+
+    private String status;
 }

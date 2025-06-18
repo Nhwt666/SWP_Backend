@@ -7,6 +7,7 @@ import com.group2.ADN.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -88,5 +89,43 @@ public class TicketService {
     public User findUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    public User findUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    public Ticket saveTicket(Ticket ticket) {
+        return ticketRepository.save(ticket);
+    }
+
+    public User saveUser(User user) {
+        return userRepository.save(user);
+    }
+
+    public List<Ticket> getTicketsByStaff(User staff) {
+        return ticketRepository.findByStaff(staff);
+    }
+
+    public org.springframework.http.ResponseEntity<?> uploadResult(Long id, org.springframework.web.multipart.MultipartFile file) {
+        Ticket ticket = ticketRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Ticket not found"));
+        try {
+            // Lưu file vào thư mục uploads/results (tạo nếu chưa có)
+            java.nio.file.Path uploadDir = java.nio.file.Paths.get("uploads/results");
+            if (!java.nio.file.Files.exists(uploadDir)) {
+                java.nio.file.Files.createDirectories(uploadDir);
+            }
+            String fileName = "ticket_" + id + "_" + System.currentTimeMillis() + ".pdf";
+            java.nio.file.Path filePath = uploadDir.resolve(fileName);
+            java.nio.file.Files.copy(file.getInputStream(), filePath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            ticket.setResult(fileName);
+            ticket.setStatus(TicketStatus.COMPLETED);
+            ticketRepository.save(ticket);
+            return org.springframework.http.ResponseEntity.ok("Upload thành công");
+        } catch (Exception e) {
+            return org.springframework.http.ResponseEntity.status(500).body("Lỗi upload file: " + e.getMessage());
+        }
     }
 }

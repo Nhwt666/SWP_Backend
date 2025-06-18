@@ -16,7 +16,7 @@ public class UserService {
     private UserRepository userRepository;
 
     @Transactional
-    public void topUpWallet(Long userId, BigDecimal amount) {
+    public void topUpWallet(Long userId, BigDecimal amount, String paymentMethod) {
         System.out.println("🔁 Top-up requested: userId = " + userId + ", amount = " + amount);
 
         User user = userRepository.findById(userId)
@@ -26,7 +26,13 @@ public class UserService {
         if (currentBalance == null) {
             currentBalance = BigDecimal.ZERO;
         }
-        user.setWalletBalance(currentBalance.add(amount));
+        if ("PAYPAL".equals(paymentMethod)) {
+            BigDecimal vndAmount = amount.multiply(BigDecimal.valueOf(26000));
+            user.setWalletBalance(currentBalance.add(vndAmount));
+            System.out.println("✅ Cộng tiền PayPal: " + amount + " USD => " + vndAmount + " VNĐ");
+        } else {
+            user.setWalletBalance(currentBalance.add(amount));
+        }
         userRepository.save(user);
 
         System.out.println("✅ Wallet new balance: " + user.getWalletBalance());

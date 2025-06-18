@@ -58,6 +58,16 @@ public class PayPalController {
                     "http://localhost:8080/api/paypal/success?userId=" + user.getId() + "&amount=" + amount
             );
 
+            // Lưu lịch sử nạp tiền PENDING
+            TopUpHistory history = new TopUpHistory();
+            history.setUserId(user.getId());
+            history.setAmount(BigDecimal.valueOf(amount));
+            history.setCreatedAt(java.time.LocalDateTime.now());
+            history.setPaymentId(payment.getId());
+            history.setPaymentMethod("PAYPAL");
+            history.setStatus("PENDING");
+            topUpHistoryRepository.save(history);
+
             // Lấy approval link
             for (Links link : payment.getLinks()) {
                 if (link.getRel().equals("approval_url")) {
@@ -88,11 +98,16 @@ public class PayPalController {
             System.out.println("👉 UserID: " + userId + ", Amount: " + amount);
 
             payPalService.executePayment(paymentId, payerId);
-            userService.topUpWallet(userId, BigDecimal.valueOf(amount));
-            payPalService.saveTopUpHistory(userId, amount, paymentId, payerId);  // <- thêm dòng này
+            TopUpHistory history = topUpHistoryRepository.findByPaymentId(paymentId).orElse(null);
+            if (history != null) {
+                history.setStatus("SUCCESS");
+                history.setPayerId(payerId);
+                topUpHistoryRepository.save(history);
+            }
+            userService.topUpWallet(userId, BigDecimal.valueOf(amount), "PAYPAL");
             System.out.println("💾 Lưu lịch sử nạp tiền thành công!");
 
-            response.sendRedirect("http://localhost:4321/payment-success");
+            response.sendRedirect("http://localhost:4321/payment-success?method=paypal");
         } catch (PayPalRESTException e) {
             e.printStackTrace();
             response.sendRedirect("http://localhost:4322/payment-failed");
