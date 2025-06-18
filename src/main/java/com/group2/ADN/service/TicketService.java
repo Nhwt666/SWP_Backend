@@ -45,7 +45,9 @@ public class TicketService {
         ticket.setPhone(isEmpty(request.getPhone()) ? null : request.getPhone());
         ticket.setEmail(isEmpty(request.getEmail()) ? null : request.getEmail());
 
-        return ticketRepository.save(ticket);
+        Ticket savedTicket = ticketRepository.save(ticket);
+        return assignStaffAutomatically(savedTicket.getId());
+
     }
     private boolean isEmpty(String str) {
         return str == null || str.trim().isEmpty();
@@ -71,12 +73,14 @@ public class TicketService {
             throw new RuntimeException("No staff available");
         }
 
-        User selectedStaff = staffList.get(0); // Basic selection
+        User selectedStaff = staffList.get(0);
         ticket.setStaff(selectedStaff);
         ticket.setStatus(TicketStatus.IN_PROGRESS);
+        System.out.println("Assigning staff to ticket ID: " + ticketId);
+        return ticketRepository.save(ticket); // ← returns ticket with staff
 
-        return ticketRepository.save(ticket);
     }
+
 
     public Ticket updateStatus(Long ticketId, TicketStatus newStatus) {
         Ticket ticket = ticketRepository.findById(ticketId)
@@ -84,6 +88,7 @@ public class TicketService {
 
         ticket.setStatus(newStatus);
         return ticketRepository.save(ticket);
+
     }
 
     public User findUserById(Long id) {
