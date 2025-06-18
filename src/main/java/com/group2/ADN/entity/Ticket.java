@@ -65,5 +65,7 @@ public class Ticket {
     @Column(length = 100)
     private String email;
 
-    private String result;
+    @ManyToOne
+    @JoinColumn(name = "result_id")
+    private Result result;
 }
