@@ -113,24 +113,24 @@ public class TicketService {
         return ticketRepository.findByStaff(staff);
     }
 
-    public org.springframework.http.ResponseEntity<?> uploadResult(Long id, org.springframework.web.multipart.MultipartFile file) {
-        Ticket ticket = ticketRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Ticket not found"));
-        try {
-            // Lưu file vào thư mục uploads/results (tạo nếu chưa có)
-            java.nio.file.Path uploadDir = java.nio.file.Paths.get("uploads/results");
-            if (!java.nio.file.Files.exists(uploadDir)) {
-                java.nio.file.Files.createDirectories(uploadDir);
-            }
-            String fileName = "ticket_" + id + "_" + System.currentTimeMillis() + ".pdf";
-            java.nio.file.Path filePath = uploadDir.resolve(fileName);
-            java.nio.file.Files.copy(file.getInputStream(), filePath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-            ticket.setResult(fileName);
-            ticket.setStatus(TicketStatus.COMPLETED);
-            ticketRepository.save(ticket);
-            return org.springframework.http.ResponseEntity.ok("Upload thành công");
-        } catch (Exception e) {
-            return org.springframework.http.ResponseEntity.status(500).body("Lỗi upload file: " + e.getMessage());
-        }
+//    public org.springframework.http.ResponseEntity<?> uploadResult(Long id, org.springframework.web.multipart.MultipartFile file) {
+//        Ticket ticket = ticketRepository.findById(id)
+//                .orElseThrow(() -> new RuntimeException("Ticket not found"));
+//        try {
+//            // Lưu file vào thư mục uploads/results (tạo nếu chưa có)
+//            java.nio.file.Path uploadDir = java.nio.file.Paths.get("uploads/results");
+//            if (!java.nio.file.Files.exists(uploadDir)) {
+//                java.nio.file.Files.createDirectories(uploadDir);
+//            }
+//            String fileName = "ticket_" + id + "_" + System.currentTimeMillis() + ".pdf";
+//            java.nio.file.Path filePath = uploadDir.resolve(fileName);
+//            java.nio.file.Files.copy(file.getInputStream(), filePath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+//            ticket.setResult(fileName);
+//            ticket.setStatus(TicketStatus.COMPLETED);
+//            ticketRepository.save(ticket);
+//            return org.springframework.http.ResponseEntity.ok("Upload thành công");
+//        } catch (Exception e) {
+//            return org.springframework.http.ResponseEntity.status(500).body("Lỗi upload file: " + e.getMessage());
+//        }
     }
-}
+

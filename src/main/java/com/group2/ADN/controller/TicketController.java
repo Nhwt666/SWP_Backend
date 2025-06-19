@@ -113,8 +113,8 @@ public class TicketController {
         return ResponseEntity.ok(ticketService.getTicketsByStaff(staff));
     }
 
-    @PostMapping("/{id}/result")
-    public ResponseEntity<?> uploadResult(@PathVariable Long id, @RequestParam("file") org.springframework.web.multipart.MultipartFile file) {
-        return ticketService.uploadResult(id, file);
-    }
+//    @PostMapping("/{id}/result")
+//    public ResponseEntity<?> uploadResult(@PathVariable Long id, @RequestParam("file") org.springframework.web.multipart.MultipartFile file) {
+//        return ticketService.uploadResult(id, file);
+//    }
 }
