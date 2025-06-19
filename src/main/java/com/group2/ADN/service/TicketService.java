@@ -22,33 +22,33 @@ public class TicketService {
     @Autowired
     private UserRepository userRepository;
 
-    public Ticket createTicketFromRequest(TicketRequest request) {
-        Ticket ticket = new Ticket();
+        public Ticket createTicketFromRequest(TicketRequest request) {
+            Ticket ticket = new Ticket();
 
-        try {
-            ticket.setType(TicketType.valueOf(request.getType()));
-            ticket.setMethod(TestMethod.valueOf(request.getMethod()));
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Invalid ticket type or method");
+            try {
+                ticket.setType(TicketType.valueOf(request.getType()));
+                ticket.setMethod(TestMethod.valueOf(request.getMethod()));
+            } catch (IllegalArgumentException e) {
+                throw new RuntimeException("Invalid ticket type or method");
+            }
+
+            ticket.setReason(request.getReason());
+            ticket.setStatus(TicketStatus.PENDING);
+
+            // Fetch customer
+            User customer = userRepository.findById(request.getCustomerId())
+                    .orElseThrow(() -> new RuntimeException("Customer not found"));
+            ticket.setCustomer(customer);
+
+            // Xử lý 3 trường address/phone/email (convert "" về null nếu cần)
+            ticket.setAddress(isEmpty(request.getAddress()) ? null : request.getAddress());
+            ticket.setPhone(isEmpty(request.getPhone()) ? null : request.getPhone());
+            ticket.setEmail(isEmpty(request.getEmail()) ? null : request.getEmail());
+
+            Ticket savedTicket = ticketRepository.save(ticket);
+            return assignStaffAutomatically(savedTicket.getId());
+
         }
-
-        ticket.setReason(request.getReason());
-        ticket.setStatus(TicketStatus.PENDING);
-
-        // Fetch customer
-        User customer = userRepository.findById(request.getCustomerId())
-                .orElseThrow(() -> new RuntimeException("Customer not found"));
-        ticket.setCustomer(customer);
-
-        // Xử lý 3 trường address/phone/email (convert "" về null nếu cần)
-        ticket.setAddress(isEmpty(request.getAddress()) ? null : request.getAddress());
-        ticket.setPhone(isEmpty(request.getPhone()) ? null : request.getPhone());
-        ticket.setEmail(isEmpty(request.getEmail()) ? null : request.getEmail());
-
-        Ticket savedTicket = ticketRepository.save(ticket);
-        return assignStaffAutomatically(savedTicket.getId());
-
-    }
     private boolean isEmpty(String str) {
         return str == null || str.trim().isEmpty();
     }
