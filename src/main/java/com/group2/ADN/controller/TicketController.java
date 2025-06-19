@@ -93,10 +93,10 @@ public class TicketController {
         ticket.setPhone(request.getPhone());
         ticket.setEmail(request.getEmail());
         Ticket saved = ticketService.saveTicket(ticket);
-        return ResponseEntity.ok(Map.of(
-            "message", "Đã tạo đơn xét nghiệm và thanh toán thành công!",
-            "ticketId", saved.getId()
-        ));
+
+        Ticket assigned = ticketService.assignStaffAutomatically(saved.getId());
+
+        return ResponseEntity.ok(assigned);
     }
 
     @GetMapping("/history")
