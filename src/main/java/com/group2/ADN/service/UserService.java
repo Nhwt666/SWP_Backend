@@ -30,6 +30,10 @@ public class UserService {
             BigDecimal vndAmount = amount.multiply(BigDecimal.valueOf(26000));
             user.setWalletBalance(currentBalance.add(vndAmount));
             System.out.println("✅ Cộng tiền PayPal: " + amount + " USD => " + vndAmount + " VNĐ");
+        } else if ("PAYPAL_SUCCESS".equals(paymentMethod)) {
+            // This case is for when the amount is already converted to VND in the controller
+            user.setWalletBalance(currentBalance.add(amount));
+            System.out.println("✅ Cộng tiền PayPal (đã quy đổi): " + amount + " VNĐ");
         } else {
             user.setWalletBalance(currentBalance.add(amount));
         }
