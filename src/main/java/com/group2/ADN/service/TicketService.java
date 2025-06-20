@@ -174,5 +174,10 @@ public class TicketService {
         resultRepository.save(result);
         return ticket;
     }
+
+    public List<Ticket> getUnassignedPendingTickets() {
+        return ticketRepository.findByStatusAndStaffIsNull(TicketStatus.PENDING);
+
+    }
 }
 
