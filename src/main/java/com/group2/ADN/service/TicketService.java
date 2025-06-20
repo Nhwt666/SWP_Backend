@@ -1,9 +1,11 @@
 package com.group2.ADN.service;
 
 import com.group2.ADN.dto.TicketRequest;
+import com.group2.ADN.dto.AssignResultRequest;
 import com.group2.ADN.entity.*;
 import com.group2.ADN.repository.TicketRepository;
 import com.group2.ADN.repository.UserRepository;
+import com.group2.ADN.repository.ResultRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,35 +24,40 @@ public class TicketService {
     @Autowired
     private UserRepository userRepository;
 
-        public Ticket createTicketFromRequest(TicketRequest request) {
-            Ticket ticket = new Ticket();
+    @Autowired
+    private ResultRepository resultRepository;
 
-            try {
-                ticket.setType(TicketType.valueOf(request.getType()));
-                ticket.setMethod(TestMethod.valueOf(request.getMethod()));
-            } catch (IllegalArgumentException e) {
-                throw new RuntimeException("Invalid ticket type or method");
-            }
+    public Ticket createTicketFromRequest(TicketRequest request) {
+        Ticket ticket = new Ticket();
 
-            ticket.setReason(request.getReason());
-            ticket.setStatus(TicketStatus.PENDING);
-
-            // Fetch customer
-            User customer = userRepository.findById(request.getCustomerId())
-                    .orElseThrow(() -> new RuntimeException("Customer not found"));
-            ticket.setCustomer(customer);
-
-            // Xử lý 3 trường address/phone/email (convert "" về null nếu cần)
-            ticket.setAddress(isEmpty(request.getAddress()) ? null : request.getAddress());
-            ticket.setPhone(isEmpty(request.getPhone()) ? null : request.getPhone());
-            ticket.setEmail(isEmpty(request.getEmail()) ? null : request.getEmail());
-
-            Ticket savedTicket = ticketRepository.save(ticket);
-            return savedTicket;
+        try {
+            ticket.setType(TicketType.valueOf(request.getType()));
+            ticket.setMethod(TestMethod.valueOf(request.getMethod()));
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid ticket type or method");
         }
+
+        ticket.setReason(request.getReason());
+        ticket.setStatus(TicketStatus.PENDING);
+
+        // Fetch customer
+        User customer = userRepository.findById(request.getCustomerId())
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
+        ticket.setCustomer(customer);
+
+        // Xử lý 3 trường address/phone/email (convert "" về null nếu cần)
+        ticket.setAddress(isEmpty(request.getAddress()) ? null : request.getAddress());
+        ticket.setPhone(isEmpty(request.getPhone()) ? null : request.getPhone());
+        ticket.setEmail(isEmpty(request.getEmail()) ? null : request.getEmail());
+
+        Ticket savedTicket = ticketRepository.save(ticket);
+        return assignStaffAutomatically(savedTicket.getId());
+    }
+
     private boolean isEmpty(String str) {
         return str == null || str.trim().isEmpty();
     }
+
     public Optional<Ticket> getTicketById(Long id) {
         return ticketRepository.findById(id);
     }
@@ -95,14 +102,12 @@ public class TicketService {
         return ticket; // Optionally return unassigned or throw exception
     }
 
-
     public Ticket updateStatus(Long ticketId, TicketStatus newStatus) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new RuntimeException("Ticket not found"));
 
         ticket.setStatus(newStatus);
         return ticketRepository.save(ticket);
-
     }
 
     public User findUserById(Long id) {
@@ -127,28 +132,47 @@ public class TicketService {
         return ticketRepository.findByStaff(staff);
     }
 
-    public List<Ticket> getUnassignedPendingTickets() {
-        return ticketRepository.findByStatusAndStaffIsNull(TicketStatus.PENDING);
+    public Ticket assignResultToTicket(AssignResultRequest request) {
+        Ticket ticket = ticketRepository.findById(request.getTicketId())
+                .orElseThrow(() -> new RuntimeException("Ticket not found"));
+        if (ticket.getResult() != null) {
+            throw new RuntimeException("Result already assigned to this ticket");
+        }
+        Result result = new Result();
+        result.setPercentage(request.getPercentage());
+        result.setDescription(request.getDescription());
+        result.setTicket(ticket);
+        resultRepository.save(result);
+        ticket.setResult(result);
+        ticket.setStatus(TicketStatus.COMPLETED);
+        return ticketRepository.save(ticket);
     }
 
-//    public org.springframework.http.ResponseEntity<?> uploadResult(Long id, org.springframework.web.multipart.MultipartFile file) {
-//        Ticket ticket = ticketRepository.findById(id)
-//                .orElseThrow(() -> new RuntimeException("Ticket not found"));
-//        try {
-//            // Lưu file vào thư mục uploads/results (tạo nếu chưa có)
-//            java.nio.file.Path uploadDir = java.nio.file.Paths.get("uploads/results");
-//            if (!java.nio.file.Files.exists(uploadDir)) {
-//                java.nio.file.Files.createDirectories(uploadDir);
-//            }
-//            String fileName = "ticket_" + id + "_" + System.currentTimeMillis() + ".pdf";
-//            java.nio.file.Path filePath = uploadDir.resolve(fileName);
-//            java.nio.file.Files.copy(file.getInputStream(), filePath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-//            ticket.setResult(fileName);
-//            ticket.setStatus(TicketStatus.COMPLETED);
-//            ticketRepository.save(ticket);
-//            return org.springframework.http.ResponseEntity.ok("Upload thành công");
-//        } catch (Exception e) {
-//            return org.springframework.http.ResponseEntity.status(500).body("Lỗi upload file: " + e.getMessage());
-//        }
+    public Ticket cancelResult(Long ticketId) {
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new RuntimeException("Ticket not found"));
+        if (ticket.getResult() == null) {
+            return ticket;
+        }
+        Long resultId = ticket.getResult().getId();
+        ticket.setResult(null);
+        ticket.setStatus(TicketStatus.IN_PROGRESS);
+        ticketRepository.save(ticket);
+        resultRepository.deleteById(resultId);
+        return ticket;
     }
+
+    public Ticket updateResultOfTicket(AssignResultRequest request) {
+        Ticket ticket = ticketRepository.findById(request.getTicketId())
+                .orElseThrow(() -> new RuntimeException("Ticket not found"));
+        Result result = ticket.getResult();
+        if (result == null) {
+            throw new RuntimeException("No result assigned to this ticket");
+        }
+        result.setPercentage(request.getPercentage());
+        result.setDescription(request.getDescription());
+        resultRepository.save(result);
+        return ticket;
+    }
+}
 

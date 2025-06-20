@@ -4,6 +4,7 @@ package com.group2.ADN.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.time.LocalDateTime;
 
@@ -65,6 +66,8 @@ public class Ticket {
     @Column(length = 100)
     private String email;
 
-    @Column(length = 255)
-    private String result;
+    @OneToOne
+    @JoinColumn(name = "result_id")
+    @JsonManagedReference
+    private Result result;
 }

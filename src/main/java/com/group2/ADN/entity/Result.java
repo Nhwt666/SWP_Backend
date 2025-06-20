@@ -3,6 +3,9 @@ package com.group2.ADN.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Max;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Getter
 @Setter
@@ -17,9 +20,27 @@ public class Result {
     private String description;
 
     @Column(nullable = false)
+    @Min(0)
+    @Max(100)
     private Double percentage;
 
-    @ManyToOne
-    @JoinColumn(name = "staff_id")
-    private User staff;
+    @OneToOne(mappedBy = "result")
+    @JsonBackReference
+    private Ticket ticket;
+
+    @Column(updatable = false)
+    private java.time.LocalDateTime createdAt;
+
+    private java.time.LocalDateTime updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = java.time.LocalDateTime.now();
+        updatedAt = createdAt;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = java.time.LocalDateTime.now();
+    }
 } 
