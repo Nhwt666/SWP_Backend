@@ -104,8 +104,16 @@ public class TicketController {
         ticket.setAddress(request.getAddress());
         ticket.setPhone(request.getPhone());
         ticket.setEmail(request.getEmail());
+        ticket.setSampleFromPersonA(request.getPersonAName());
+        ticket.setSampleFromPersonB(request.getPersonBName());
+        if (ticket.getMethod() == TestMethod.AT_FACILITY) {
+            ticket.setAppointmentDate(request.getAppointmentDate());
+        } else {
+            ticket.setAppointmentDate(null);
+        }
         Ticket saved = ticketService.saveTicket(ticket);
-        return ResponseEntity.ok(saved);
+        Ticket assigned = ticketService.assignStaffAutomatically(saved.getId());
+        return ResponseEntity.ok(assigned);
     }
 
     @GetMapping("/history")

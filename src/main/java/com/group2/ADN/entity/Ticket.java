@@ -70,4 +70,12 @@ public class Ticket {
     @JoinColumn(name = "result_id")
     @JsonManagedReference
     private Result result;
+
+    @Column(length = 255)
+    private String sampleFromPersonA;
+
+    @Column(length = 255)
+    private String sampleFromPersonB;
+
+    private LocalDateTime appointmentDate;
 }

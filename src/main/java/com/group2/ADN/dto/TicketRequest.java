@@ -3,6 +3,7 @@ package com.group2.ADN.dto;
 import lombok.Getter;
 import lombok.Setter;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -18,4 +19,9 @@ public class TicketRequest {
 
     private BigDecimal amount;
     private String result;
+
+    private String personAName;
+    private String personBName;
+
+    private LocalDateTime appointmentDate;
 }

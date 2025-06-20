@@ -50,6 +50,14 @@ public class TicketService {
         ticket.setPhone(isEmpty(request.getPhone()) ? null : request.getPhone());
         ticket.setEmail(isEmpty(request.getEmail()) ? null : request.getEmail());
 
+        ticket.setSampleFromPersonA(request.getPersonAName());
+        ticket.setSampleFromPersonB(request.getPersonBName());
+        if (ticket.getMethod() == TestMethod.AT_FACILITY) {
+            ticket.setAppointmentDate(request.getAppointmentDate());
+        } else {
+            ticket.setAppointmentDate(null);
+        }
+
         Ticket savedTicket = ticketRepository.save(ticket);
         return assignStaffAutomatically(savedTicket.getId());
     }
