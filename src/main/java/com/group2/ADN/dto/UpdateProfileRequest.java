@@ -21,6 +21,5 @@ public class UpdateProfileRequest {
     private String phone;
 
     @Size(min = 5, max = 100, message = "Địa chỉ phải từ 5 đến 100 ký tự")
-    @Pattern(regexp = "^[A-Za-zÀ-Ỵà-ỹ\\s]+$", message = "Địa chỉ được chứa chữ cái và dấu cách")
     private String address;
 }

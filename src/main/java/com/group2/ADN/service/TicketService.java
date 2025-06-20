@@ -46,8 +46,7 @@ public class TicketService {
             ticket.setEmail(isEmpty(request.getEmail()) ? null : request.getEmail());
 
             Ticket savedTicket = ticketRepository.save(ticket);
-            return assignStaffAutomatically(savedTicket.getId());
-
+            return savedTicket;
         }
     private boolean isEmpty(String str) {
         return str == null || str.trim().isEmpty();
@@ -126,6 +125,10 @@ public class TicketService {
 
     public List<Ticket> getTicketsByStaff(User staff) {
         return ticketRepository.findByStaff(staff);
+    }
+
+    public List<Ticket> getUnassignedPendingTickets() {
+        return ticketRepository.findByStatusAndStaffIsNull(TicketStatus.PENDING);
     }
 
 //    public org.springframework.http.ResponseEntity<?> uploadResult(Long id, org.springframework.web.multipart.MultipartFile file) {

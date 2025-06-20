@@ -15,4 +15,6 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     List<Ticket> findByTypeAndMethod(TicketType type, TestMethod method);
 
     int countByStaffAndStatusIn(User staff, List<TicketStatus> statuses);
+
+    List<Ticket> findByStatusAndStaffIsNull(TicketStatus status);
 }

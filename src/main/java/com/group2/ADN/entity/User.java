@@ -37,19 +37,10 @@ public class User {
 
 
     @Column(name = "wallet_balance", nullable = false)
+    @Builder.Default
     private BigDecimal walletBalance = BigDecimal.ZERO;
 
     @Column(length = 255)
     private String address;
-
-    @OneToMany(mappedBy = "staff")
-    private java.util.List<Result> results;
-
-    public void setStaffForResult(Result result) {
-        if (this.getRole() != UserRole.STAFF) {
-            throw new IllegalArgumentException("Only staff can be assigned to a result.");
-        }
-        result.setStaff(this);
-    }
 
 }

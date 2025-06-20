@@ -70,6 +70,12 @@ public class TicketController {
         if (amount == null) {
             return ResponseEntity.badRequest().body("Thiếu thông tin chi phí!");
         }
+        // Validate amount range
+        BigDecimal min = new BigDecimal("100000");
+        BigDecimal max = new BigDecimal("10000000000");
+        if (amount.compareTo(min) < 0 || amount.compareTo(max) > 0) {
+            return ResponseEntity.badRequest().body("❌ Số tiền không hợp lệ (100.000 ~ 10.000.000.000)");
+        }
         BigDecimal currentBalance = user.getWalletBalance();
         if (currentBalance == null) currentBalance = BigDecimal.ZERO;
         if (currentBalance.compareTo(amount) < 0) {
@@ -93,10 +99,7 @@ public class TicketController {
         ticket.setPhone(request.getPhone());
         ticket.setEmail(request.getEmail());
         Ticket saved = ticketService.saveTicket(ticket);
-
-        Ticket assigned = ticketService.assignStaffAutomatically(saved.getId());
-
-        return ResponseEntity.ok(assigned);
+        return ResponseEntity.ok(saved);
     }
 
     @GetMapping("/history")
@@ -111,6 +114,11 @@ public class TicketController {
         String email = authentication.getName();
         User staff = ticketService.findUserByEmail(email);
         return ResponseEntity.ok(ticketService.getTicketsByStaff(staff));
+    }
+
+    @GetMapping("/unassigned")
+    public ResponseEntity<List<Ticket>> getUnassignedTickets() {
+        return ResponseEntity.ok(ticketService.getUnassignedPendingTickets());
     }
 
 //    @PostMapping("/{id}/result")
