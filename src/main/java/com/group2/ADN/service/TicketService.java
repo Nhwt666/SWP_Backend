@@ -22,36 +22,85 @@ public class TicketService {
     @Autowired
     private UserRepository userRepository;
 
-        public Ticket createTicketFromRequest(TicketRequest request) {
-            Ticket ticket = new Ticket();
+    public Ticket createTicketFromRequest(TicketRequest request) {
+        Ticket ticket = new Ticket();
 
+        try {
+            ticket.setType(TicketType.valueOf(request.getType()));
+            ticket.setMethod(TestMethod.valueOf(request.getMethod()));
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid ticket type or method");
+        }
+
+        ticket.setReason(request.getReason());
+        ticket.setStatus(TicketStatus.PENDING);
+
+        // Fetch customer
+        User customer = userRepository.findById(request.getCustomerId())
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
+        ticket.setCustomer(customer);
+
+        // Xử lý 3 trường address/phone/email (convert "" về null nếu cần)
+        ticket.setAddress(isEmpty(request.getAddress()) ? null : request.getAddress());
+        ticket.setPhone(isEmpty(request.getPhone()) ? null : request.getPhone());
+        ticket.setEmail(isEmpty(request.getEmail()) ? null : request.getEmail());
+
+        Ticket savedTicket = ticketRepository.save(ticket);
+        return assignStaffAutomatically(savedTicket.getId());
+    }
+
+    public Ticket updateTicketFromRequest(Long ticketId, TicketRequest request) {
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new RuntimeException("Ticket not found with id: " + ticketId));
+
+        // Update basic fields
+        if (request.getReason() != null) {
+            ticket.setReason(request.getReason());
+        }
+        if (request.getAddress() != null) {
+            ticket.setAddress(request.getAddress());
+        }
+        if (request.getPhone() != null) {
+            ticket.setPhone(request.getPhone());
+        }
+        if (request.getEmail() != null) {
+            ticket.setEmail(request.getEmail());
+        }
+
+        // Update enums safely
+        if (request.getType() != null) {
             try {
                 ticket.setType(TicketType.valueOf(request.getType()));
+            } catch (IllegalArgumentException e) {
+                // Optionally log this error or handle it
+            }
+        }
+        if (request.getMethod() != null) {
+            try {
                 ticket.setMethod(TestMethod.valueOf(request.getMethod()));
             } catch (IllegalArgumentException e) {
-                throw new RuntimeException("Invalid ticket type or method");
+                // Optionally log this error or handle it
             }
-
-            ticket.setReason(request.getReason());
-            ticket.setStatus(TicketStatus.PENDING);
-
-            // Fetch customer
-            User customer = userRepository.findById(request.getCustomerId())
-                    .orElseThrow(() -> new RuntimeException("Customer not found"));
-            ticket.setCustomer(customer);
-
-            // Xử lý 3 trường address/phone/email (convert "" về null nếu cần)
-            ticket.setAddress(isEmpty(request.getAddress()) ? null : request.getAddress());
-            ticket.setPhone(isEmpty(request.getPhone()) ? null : request.getPhone());
-            ticket.setEmail(isEmpty(request.getEmail()) ? null : request.getEmail());
-
-            Ticket savedTicket = ticketRepository.save(ticket);
-            return assignStaffAutomatically(savedTicket.getId());
-
         }
+
+        // Update relationships
+        if (request.getCustomerId() != null) {
+            User customer = userRepository.findById(request.getCustomerId())
+                    .orElseThrow(() -> new RuntimeException("Customer not found with id: " + request.getCustomerId()));
+            ticket.setCustomer(customer);
+        }
+        
+        // Note: Staff assignment and status changes are handled by other methods
+        // like assignStaffAutomatically() or updateStatus().
+        // Admin update could be extended to handle these as well if needed.
+
+        return ticketRepository.save(ticket);
+    }
+
     private boolean isEmpty(String str) {
         return str == null || str.trim().isEmpty();
     }
+
     public Optional<Ticket> getTicketById(Long id) {
         return ticketRepository.findById(id);
     }
@@ -96,14 +145,12 @@ public class TicketService {
         return ticket; // Optionally return unassigned or throw exception
     }
 
-
     public Ticket updateStatus(Long ticketId, TicketStatus newStatus) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new RuntimeException("Ticket not found"));
 
         ticket.setStatus(newStatus);
         return ticketRepository.save(ticket);
-
     }
 
     public User findUserById(Long id) {
@@ -147,5 +194,6 @@ public class TicketService {
 //        } catch (Exception e) {
 //            return org.springframework.http.ResponseEntity.status(500).body("Lỗi upload file: " + e.getMessage());
 //        }
-    }
+//    }
+}
 

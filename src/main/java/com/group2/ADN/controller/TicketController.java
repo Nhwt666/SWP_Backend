@@ -11,17 +11,21 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 import com.group2.ADN.entity.TicketType;
 import com.group2.ADN.entity.TestMethod;
+import java.security.Principal;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
+import com.group2.ADN.service.UserService;
 
 @RestController
 @RequestMapping("/tickets")
+@RequiredArgsConstructor
 public class TicketController {
 
-    @Autowired
-    private TicketService ticketService;
+    private final TicketService ticketService;
+    private final UserService userService;
 
     @PostMapping
     public ResponseEntity<Ticket> createTicket(@RequestBody TicketRequest request) {
@@ -86,6 +90,7 @@ public class TicketController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body("Invalid ticket type or method");
         }
+        ticket.setAmount(amount);
         ticket.setReason(request.getReason());
         ticket.setStatus(TicketStatus.PENDING); // Trạng thái xử lý nghiệp vụ
         ticket.setCustomer(user);

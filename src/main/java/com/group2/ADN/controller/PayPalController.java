@@ -22,7 +22,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/paypal")
+@RequestMapping("/paypal")
 public class PayPalController {
 
     @Autowired
@@ -36,6 +36,7 @@ public class PayPalController {
 
     @Autowired
     private TopUpHistoryRepository topUpHistoryRepository;
+
     @PostMapping("/pay")
     public ResponseEntity<?> pay(@RequestParam double amount) {
         try {
@@ -54,14 +55,15 @@ public class PayPalController {
                     "paypal",
                     "sale",
                     "Top-up ADN Wallet",
-                    "http://localhost:8080/api/paypal/cancel",
+                    "http://localhost:4329/payment-failed",
                     "http://localhost:8080/api/paypal/success?userId=" + user.getId() + "&amount=" + amount
             );
 
             // Lưu lịch sử nạp tiền PENDING
+            BigDecimal vndAmount = BigDecimal.valueOf(amount).multiply(BigDecimal.valueOf(26000)); // Quy đổi USD sang VND
             TopUpHistory history = new TopUpHistory();
             history.setUserId(user.getId());
-            history.setAmount(BigDecimal.valueOf(amount));
+            history.setAmount(vndAmount); // Lưu vào DB là VND
             history.setCreatedAt(java.time.LocalDateTime.now());
             history.setPaymentId(payment.getId());
             history.setPaymentMethod("PAYPAL");
@@ -89,34 +91,43 @@ public class PayPalController {
     public void success(@RequestParam String paymentId,
                         @RequestParam("PayerID") String payerId,
                         @RequestParam Long userId,
-                        @RequestParam double amount,
+                        @RequestParam double amount, // This amount is in USD from the original request
                         HttpServletResponse response) throws IOException {
         try {
             System.out.println("✅ PayPal SUCCESS callback!");
             System.out.println("👉 PaymentID: " + paymentId);
             System.out.println("👉 PayerID: " + payerId);
-            System.out.println("👉 UserID: " + userId + ", Amount: " + amount);
+            System.out.println("👉 UserID: " + userId + ", Amount (USD): " + amount);
 
             payPalService.executePayment(paymentId, payerId);
-            TopUpHistory history = topUpHistoryRepository.findByPaymentId(paymentId).orElse(null);
-            if (history != null) {
-                history.setStatus("SUCCESS");
-                history.setPayerId(payerId);
-                topUpHistoryRepository.save(history);
-            }
-            userService.topUpWallet(userId, BigDecimal.valueOf(amount), "PAYPAL");
+            TopUpHistory history = topUpHistoryRepository.findByPaymentId(paymentId)
+                    .orElseThrow(() -> new RuntimeException("TopUpHistory not found for paymentId: " + paymentId));
+
+            history.setStatus("SUCCESS");
+            history.setPayerId(payerId);
+            topUpHistoryRepository.save(history);
+
+            // Use the amount from the history record (which is in VND)
+            userService.topUpWallet(userId, history.getAmount(), "PAYPAL_SUCCESS");
             System.out.println("💾 Lưu lịch sử nạp tiền thành công!");
 
-            response.sendRedirect("http://localhost:4321/payment-success?method=paypal");
-        } catch (PayPalRESTException e) {
+            response.sendRedirect("http://localhost:4329/payment-success?method=paypal");
+        } catch (PayPalRESTException | RuntimeException e) {
             e.printStackTrace();
-            response.sendRedirect("http://localhost:4322/payment-failed");
+            TopUpHistory history = topUpHistoryRepository.findByPaymentId(paymentId).orElse(null);
+            if (history != null) {
+                history.setStatus("FAILED");
+                topUpHistoryRepository.save(history);
+            }
+            response.sendRedirect("http://localhost:4329/payment-failed");
         }
     }
 
     @GetMapping("/topup-history")
-    public ResponseEntity<List<TopUpHistory>> getTopUpHistory(@RequestParam Long userId) {
-        List<TopUpHistory> history = topUpHistoryRepository.findByUserId(userId);
+    public ResponseEntity<List<TopUpHistory>> getTopUpHistory(Authentication authentication) {
+        String email = authentication.getName();
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+        List<TopUpHistory> history = topUpHistoryRepository.findByUserId(user.getId());
         return ResponseEntity.ok(history);
     }
 

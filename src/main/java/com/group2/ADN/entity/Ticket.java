@@ -4,8 +4,10 @@ package com.group2.ADN.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import java.time.LocalDateTime;
+import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -35,10 +37,12 @@ public class Ticket {
 
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)
+    @JsonBackReference("user-tickets")
     private User customer;
 
     @ManyToOne
     @JoinColumn(name = "staff_id")
+    @JsonBackReference("staff-tickets")
     private User staff;  // Nullable until assigned
 
     private LocalDateTime createdAt;
@@ -68,4 +72,7 @@ public class Ticket {
     @ManyToOne
     @JoinColumn(name = "result_id")
     private Result result;
+
+    @Column(nullable = false)
+    private BigDecimal amount = BigDecimal.ZERO;
 }

@@ -2,8 +2,10 @@ package com.group2.ADN.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -44,6 +46,14 @@ public class User {
 
     @OneToMany(mappedBy = "staff")
     private java.util.List<Result> results;
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference("user-tickets")
+    private List<Ticket> tickets;
+
+    @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference("staff-tickets")
+    private List<Ticket> assignedTickets;
 
     public void setStaffForResult(Result result) {
         if (this.getRole() != UserRole.STAFF) {

@@ -1,15 +1,14 @@
 package com.group2.ADN.dto;
 
-import lombok.Getter;
-import lombok.Setter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-@Getter
-@Setter
-public class CreateStaffRequest {
+@Data
+@AllArgsConstructor
+public class DoctorWithTicketCountDTO {
+    private Long id;
     private String name;
     private String email;
-    private String password;
     private String phone;
-}
+    private int ticketCount;
+} 

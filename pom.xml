@@ -133,6 +133,23 @@
 					</excludes>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.flywaydb</groupId>
+				<artifactId>flyway-maven-plugin</artifactId>
+				<version>9.22.3</version>
+				<configuration>
+					<url>jdbc:sqlserver://localhost:1433;databaseName=ADN_DB;encrypt=true;trustServerCertificate=true</url>
+					<user>sa</user>
+					<password>12345</password>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>com.microsoft.sqlserver</groupId>
+						<artifactId>mssql-jdbc</artifactId>
+						<version>12.10.0.jre11</version>
+					</dependency>
+				</dependencies>
+			</plugin>
 		</plugins>
 	</build>
 
