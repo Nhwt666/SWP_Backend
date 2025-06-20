@@ -73,8 +73,14 @@ public class TicketController {
         // Validate amount range
         BigDecimal min = new BigDecimal("100000");
         BigDecimal max = new BigDecimal("10000000000");
+
+
         if (amount.compareTo(min) < 0 || amount.compareTo(max) > 0) {
+
+
             return ResponseEntity.badRequest().body("❌ Số tiền không hợp lệ (100.000 ~ 10.000.000.000)");
+
+
         }
         BigDecimal currentBalance = user.getWalletBalance();
         if (currentBalance == null) currentBalance = BigDecimal.ZERO;
