@@ -1,0 +1,3 @@
+-- This migration is intentionally left empty.
+-- Column appointment_date already exists in the tickets table from previous entity mapping.
+-- This file serves as a new baseline for subsequent migrations. 

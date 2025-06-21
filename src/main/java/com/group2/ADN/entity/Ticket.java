@@ -7,6 +7,7 @@ import lombok.Setter;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -80,7 +81,7 @@ public class Ticket {
     @Column(length = 255, columnDefinition = "nvarchar")
     private String sampleFromPersonB;
 
-    private LocalDateTime appointmentDate;
+    private LocalDate appointmentDate;
 
     @Column(name = "sample1_name")
     private String sample1Name;

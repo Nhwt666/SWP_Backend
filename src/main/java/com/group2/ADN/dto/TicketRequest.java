@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -23,5 +24,8 @@ public class TicketRequest {
     private String personAName;
     private String personBName;
 
-    private LocalDateTime appointmentDate;
+    private LocalDate appointmentDate;
+
+    private String sample1Name;
+    private String sample2Name;
 }

@@ -105,6 +105,18 @@
 			<artifactId>rest-api-sdk</artifactId>
 			<version>1.14.0</version>
 		</dependency>
+
+		<!-- Flyway Migration -->
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+			<version>10.15.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-sqlserver</artifactId>
+			<version>10.15.2</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -119,6 +131,16 @@
 							<artifactId>lombok</artifactId>
 						</path>
 					</annotationProcessorPaths>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.flywaydb</groupId>
+				<artifactId>flyway-maven-plugin</artifactId>
+				<version>10.15.2</version>
+				<configuration>
+					<url>jdbc:sqlserver://localhost:1433;databaseName=ADN_DB;encrypt=true;trustServerCertificate=true</url>
+					<user>sa</user>
+					<password>12345</password>
 				</configuration>
 			</plugin>
 			<plugin>
