@@ -48,6 +48,12 @@ public class TicketController {
         return ResponseEntity.ok(ticketUpdated);
     }
 
+    @PutMapping("/{id}/complete")
+    public ResponseEntity<Ticket> completeTicket(@PathVariable Long id, @RequestBody String result) {
+        Ticket ticketUpdated = ticketService.completeTicket(id, result);
+        return ResponseEntity.ok(ticketUpdated);
+    }
+
     @GetMapping("/customer/{customerId}")
     public ResponseEntity<List<Ticket>> getTicketsByCustomer(@PathVariable Long customerId) {
         User user = ticketService.findUserById(customerId);
@@ -104,16 +110,15 @@ public class TicketController {
         ticket.setAddress(request.getAddress());
         ticket.setPhone(request.getPhone());
         ticket.setEmail(request.getEmail());
-        ticket.setSampleFromPersonA(request.getPersonAName());
-        ticket.setSampleFromPersonB(request.getPersonBName());
+        ticket.setSample1Name(request.getSample1Name());
+        ticket.setSample2Name(request.getSample2Name());
         if (ticket.getMethod() == TestMethod.AT_FACILITY) {
             ticket.setAppointmentDate(request.getAppointmentDate());
         } else {
             ticket.setAppointmentDate(null);
         }
         Ticket saved = ticketService.saveTicket(ticket);
-        Ticket assigned = ticketService.assignStaffAutomatically(saved.getId());
-        return ResponseEntity.ok(assigned);
+        return ResponseEntity.ok(saved);
     }
 
     @GetMapping("/history")

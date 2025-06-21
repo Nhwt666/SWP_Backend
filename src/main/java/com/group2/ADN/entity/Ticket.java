@@ -57,6 +57,9 @@ public class Ticket {
         updatedAt = LocalDateTime.now();
     }
 
+    @Column(length = 500)
+    private String resultString;
+
     @Column(length = 255)
     private String address;
 
@@ -78,4 +81,10 @@ public class Ticket {
     private String sampleFromPersonB;
 
     private LocalDateTime appointmentDate;
+
+    @Column(name = "sample1_name")
+    private String sample1Name;
+    
+    @Column(name = "sample2_name") 
+    private String sample2Name;
 }

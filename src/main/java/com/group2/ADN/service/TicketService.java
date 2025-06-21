@@ -52,6 +52,8 @@ public class TicketService {
 
         ticket.setSampleFromPersonA(request.getPersonAName());
         ticket.setSampleFromPersonB(request.getPersonBName());
+        ticket.setSample1Name(request.getSample1Name());
+        ticket.setSample2Name(request.getSample2Name());
         if (ticket.getMethod() == TestMethod.AT_FACILITY) {
             ticket.setAppointmentDate(request.getAppointmentDate());
         } else {
@@ -59,7 +61,7 @@ public class TicketService {
         }
 
         Ticket savedTicket = ticketRepository.save(ticket);
-        return assignStaffAutomatically(savedTicket.getId());
+        return savedTicket;
     }
 
     private boolean isEmpty(String str) {
@@ -115,6 +117,15 @@ public class TicketService {
                 .orElseThrow(() -> new RuntimeException("Ticket not found"));
 
         ticket.setStatus(newStatus);
+        return ticketRepository.save(ticket);
+    }
+
+    public Ticket completeTicket(Long ticketId, String result) {
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new RuntimeException("Ticket not found"));
+
+        ticket.setStatus(TicketStatus.COMPLETED);
+        ticket.setResultString(result);
         return ticketRepository.save(ticket);
     }
 
