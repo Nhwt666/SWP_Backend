@@ -71,10 +71,10 @@ public class Ticket {
     @JsonManagedReference
     private Result result;
 
-    @Column(length = 255)
+    @Column(length = 255, columnDefinition = "nvarchar")
     private String sampleFromPersonA;
 
-    @Column(length = 255)
+    @Column(length = 255, columnDefinition = "nvarchar")
     private String sampleFromPersonB;
 
     private LocalDateTime appointmentDate;
