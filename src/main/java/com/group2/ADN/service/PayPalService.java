@@ -64,10 +64,18 @@ public class PayPalService {
     public void saveTopUpHistory(Long userId, double amount, String paymentId, String payerId) {
         TopUpHistory history = new TopUpHistory();
         history.setUserId(userId);
-        history.setAmount(BigDecimal.valueOf(amount));
+
+        // Convert USD to VND
+        BigDecimal usdAmount = BigDecimal.valueOf(amount);
+        BigDecimal exchangeRate = new BigDecimal("26000");
+        BigDecimal vndAmount = usdAmount.multiply(exchangeRate);
+        history.setAmount(vndAmount);
+
         history.setCreatedAt(LocalDateTime.now());
         history.setPaymentId(paymentId);
         history.setPayerId(payerId);
+        history.setPaymentMethod("PAYPAL");
+        history.setStatus("SUCCESS");
 
         topUpHistoryRepository.save(history);
     }

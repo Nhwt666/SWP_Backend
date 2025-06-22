@@ -83,6 +83,9 @@ public class Ticket {
 
     private LocalDate appointmentDate;
 
+    @Column(name = "amount")
+    private java.math.BigDecimal amount;
+
     @Column(name = "sample1_name")
     private String sample1Name;
     

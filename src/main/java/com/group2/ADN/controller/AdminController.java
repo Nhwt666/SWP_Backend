@@ -5,6 +5,7 @@ import com.group2.ADN.entity.User;
 import com.group2.ADN.entity.UserRole;
 import com.group2.ADN.repository.TicketRepository;
 import com.group2.ADN.repository.UserRepository;
+import com.group2.ADN.service.AdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,6 +23,7 @@ public class AdminController {
     private final UserRepository userRepository;
     private final TicketRepository ticketRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AdminService adminService;
 
     // ✅ Kiểm tra phân quyền admin
     @GetMapping("/Test_Phan_Quyen")
@@ -35,14 +37,21 @@ public class AdminController {
         long totalUsers = userRepository.count();
         long totalTickets = ticketRepository.count();
         long feedbackCount = 0; // Nếu có feedbackRepo thì dùng: feedbackRepository.count();
+        BigDecimal totalTicketSpending = ticketRepository.sumTotalAmount();
 
         Map<String, Object> data = Map.of(
                 "totalUsers", totalUsers,
                 "totalTickets", totalTickets,
-                "feedbackCount", feedbackCount
+                "feedbackCount", feedbackCount,
+                "totalTicketSpending", totalTicketSpending != null ? totalTicketSpending : BigDecimal.ZERO
         );
 
         return ResponseEntity.ok(data);
+    }
+
+    @GetMapping("/deposits/stats")
+    public ResponseEntity<Map<String, Object>> getDepositStats() {
+        return ResponseEntity.ok(adminService.getDepositStatistics());
     }
 
     // ✅ Tạo tài khoản nhân viên

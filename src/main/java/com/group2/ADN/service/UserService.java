@@ -26,13 +26,7 @@ public class UserService {
         if (currentBalance == null) {
             currentBalance = BigDecimal.ZERO;
         }
-        if ("PAYPAL".equals(paymentMethod)) {
-            BigDecimal vndAmount = amount.multiply(BigDecimal.valueOf(26000));
-            user.setWalletBalance(currentBalance.add(vndAmount));
-            System.out.println("✅ Cộng tiền PayPal: " + amount + " USD => " + vndAmount + " VNĐ");
-        } else {
-            user.setWalletBalance(currentBalance.add(amount));
-        }
+        user.setWalletBalance(currentBalance.add(amount));
         userRepository.save(user);
 
         System.out.println("✅ Wallet new balance: " + user.getWalletBalance());

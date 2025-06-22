@@ -58,10 +58,15 @@ public class PayPalController {
                     "http://localhost:8080/api/paypal/success?userId=" + user.getId() + "&amount=" + amount
             );
 
+            // --- FIX: Convert amount to VND before saving ---
+            BigDecimal usdAmount = BigDecimal.valueOf(amount);
+            BigDecimal exchangeRate = new BigDecimal("26000");
+            BigDecimal vndAmount = usdAmount.multiply(exchangeRate);
+
             // Lưu lịch sử nạp tiền PENDING
             TopUpHistory history = new TopUpHistory();
             history.setUserId(user.getId());
-            history.setAmount(BigDecimal.valueOf(amount));
+            history.setAmount(vndAmount); // Save VND amount
             history.setCreatedAt(java.time.LocalDateTime.now());
             history.setPaymentId(payment.getId());
             history.setPaymentMethod("PAYPAL");
@@ -104,7 +109,11 @@ public class PayPalController {
                 history.setPayerId(payerId);
                 topUpHistoryRepository.save(history);
             }
-            userService.topUpWallet(userId, BigDecimal.valueOf(amount), "PAYPAL");
+            // --- FIX: Use the converted VND amount to top up wallet ---
+            BigDecimal usdAmount = BigDecimal.valueOf(amount);
+            BigDecimal exchangeRate = new BigDecimal("26000");
+            BigDecimal vndAmount = usdAmount.multiply(exchangeRate);
+            userService.topUpWallet(userId, vndAmount, "PAYPAL");
             System.out.println("💾 Lưu lịch sử nạp tiền thành công!");
 
             response.sendRedirect("http://localhost:4321/payment-success?method=paypal");

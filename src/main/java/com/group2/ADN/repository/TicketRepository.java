@@ -2,7 +2,9 @@ package com.group2.ADN.repository;
 
 import com.group2.ADN.entity.*;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
@@ -17,4 +19,7 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     int countByStaffAndStatusIn(User staff, List<TicketStatus> statuses);
 
     List<Ticket> findByStatusAndStaffIsNull(TicketStatus status);
+
+    @Query("SELECT SUM(t.amount) FROM Ticket t")
+    BigDecimal sumTotalAmount();
 }
