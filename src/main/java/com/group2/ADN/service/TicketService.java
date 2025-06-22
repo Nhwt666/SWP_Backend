@@ -13,6 +13,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
+import java.time.LocalDateTime;
+import com.group2.ADN.dto.AdminUpdateTicketRequest;
+import com.group2.ADN.dto.AdminCreateTicketRequest;
 
 @Service
 @Transactional
@@ -196,7 +199,56 @@ public class TicketService {
 
     public List<Ticket> getUnassignedPendingTickets() {
         return ticketRepository.findByStatusAndStaffIsNull(TicketStatus.PENDING);
+    }
 
+    public List<Ticket> getPendingTicketsForStaff() {
+        return ticketRepository.findByStatusAndStaffIsNull(TicketStatus.PENDING);
+    }
+
+    @Transactional
+    public Ticket adminUpdateTicket(Long ticketId, AdminUpdateTicketRequest request) {
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new RuntimeException("Ticket not found with id: " + ticketId));
+
+        if (request.getStatus() != null) {
+            ticket.setStatus(request.getStatus());
+        }
+
+        if (request.getStaffId() != null) {
+            User staff = userRepository.findById(request.getStaffId())
+                    .orElseThrow(() -> new RuntimeException("Staff not found with id: " + request.getStaffId()));
+            ticket.setStaff(staff);
+        }
+
+        if (request.getResultString() != null) {
+            ticket.setResultString(request.getResultString());
+        }
+
+        ticket.setUpdatedAt(LocalDateTime.now());
+        return ticketRepository.save(ticket);
+    }
+
+    @Transactional
+    public Ticket createTicketByAdmin(AdminCreateTicketRequest request) {
+        User customer = userRepository.findById(request.getCustomerId())
+                .orElseThrow(() -> new RuntimeException("Customer not found with id: " + request.getCustomerId()));
+
+        Ticket ticket = new Ticket();
+        ticket.setCustomer(customer);
+        ticket.setType(request.getType());
+        ticket.setMethod(request.getMethod());
+        ticket.setStatus(request.getStatus());
+        ticket.setAmount(request.getAmount());
+        ticket.setEmail(request.getEmail());
+        ticket.setPhone(request.getPhone());
+        ticket.setAddress(request.getAddress());
+        ticket.setSample1Name(request.getSample1Name());
+        ticket.setSample2Name(request.getSample2Name());
+        ticket.setReason(request.getReason());
+        
+        // createdAt and updatedAt are handled by @PrePersist and @PreUpdate
+
+        return ticketRepository.save(ticket);
     }
 }
 

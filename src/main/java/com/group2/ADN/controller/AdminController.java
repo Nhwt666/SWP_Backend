@@ -6,10 +6,14 @@ import com.group2.ADN.entity.UserRole;
 import com.group2.ADN.repository.TicketRepository;
 import com.group2.ADN.repository.UserRepository;
 import com.group2.ADN.service.AdminService;
+import com.group2.ADN.service.TicketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import com.group2.ADN.entity.Ticket;
+import com.group2.ADN.dto.AdminUpdateTicketRequest;
+import com.group2.ADN.dto.AdminCreateTicketRequest;
 
 import java.util.List;
 import java.util.Map;
@@ -24,6 +28,7 @@ public class AdminController {
     private final TicketRepository ticketRepository;
     private final PasswordEncoder passwordEncoder;
     private final AdminService adminService;
+    private final TicketService ticketService;
 
     // ✅ Kiểm tra phân quyền admin
     @GetMapping("/Test_Phan_Quyen")
@@ -78,5 +83,33 @@ public class AdminController {
     public ResponseEntity<List<User>> getAllStaff() {
         List<User> staffList = userRepository.findByRole(UserRole.STAFF);
         return ResponseEntity.ok(staffList);
+    }
+
+    // Ticket Management
+    @GetMapping("/tickets")
+    public ResponseEntity<List<Ticket>> getAllTickets() {
+        List<Ticket> tickets = ticketRepository.findAll();
+        return ResponseEntity.ok(tickets);
+    }
+
+    @PostMapping("/tickets")
+    public ResponseEntity<Ticket> createTicket(@RequestBody AdminCreateTicketRequest request) {
+        Ticket newTicket = ticketService.createTicketByAdmin(request);
+        return ResponseEntity.status(201).body(newTicket);
+    }
+
+    @PutMapping("/tickets/{id}")
+    public ResponseEntity<Ticket> updateTicket(@PathVariable Long id, @RequestBody AdminUpdateTicketRequest request) {
+        Ticket updatedTicket = ticketService.adminUpdateTicket(id, request);
+        return ResponseEntity.ok(updatedTicket);
+    }
+
+    @DeleteMapping("/tickets/{id}")
+    public ResponseEntity<Void> deleteTicket(@PathVariable Long id) {
+        if (!ticketRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        ticketRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }
