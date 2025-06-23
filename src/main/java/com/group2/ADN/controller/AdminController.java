@@ -7,6 +7,7 @@ import com.group2.ADN.repository.TicketRepository;
 import com.group2.ADN.repository.UserRepository;
 import com.group2.ADN.service.AdminService;
 import com.group2.ADN.service.TicketService;
+import com.group2.ADN.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,6 +15,10 @@ import org.springframework.web.bind.annotation.*;
 import com.group2.ADN.entity.Ticket;
 import com.group2.ADN.dto.AdminUpdateTicketRequest;
 import com.group2.ADN.dto.AdminCreateTicketRequest;
+import com.group2.ADN.dto.AdminUpdateUserRequest;
+import com.group2.ADN.dto.AdminCreateUserRequest;
+import com.group2.ADN.dto.UserWithTicketStatsDto;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 import java.util.Map;
@@ -29,6 +34,7 @@ public class AdminController {
     private final PasswordEncoder passwordEncoder;
     private final AdminService adminService;
     private final TicketService ticketService;
+    private final UserService userService;
 
     // ✅ Kiểm tra phân quyền admin
     @GetMapping("/Test_Phan_Quyen")
@@ -85,6 +91,14 @@ public class AdminController {
         return ResponseEntity.ok(staffList);
     }
 
+    @GetMapping("/all-users")
+    public ResponseEntity<List<UserWithTicketStatsDto>> getAllUsers(
+            @RequestParam(required = false) String role,
+            @RequestParam(required = false) String keyword) {
+        List<UserWithTicketStatsDto> usersWithStats = userService.findUsersWithFiltersAndStats(role, keyword);
+        return ResponseEntity.ok(usersWithStats);
+    }
+
     // Ticket Management
     @GetMapping("/tickets")
     public ResponseEntity<List<Ticket>> getAllTickets() {
@@ -104,6 +118,18 @@ public class AdminController {
         return ResponseEntity.ok(updatedTicket);
     }
 
+    @PutMapping("/tickets/{ticketId}/assign/{staffId}")
+    public ResponseEntity<Ticket> assignTicket(@PathVariable Long ticketId, @PathVariable Long staffId) {
+        Ticket assignedTicket = ticketService.assignTicketToStaff(ticketId, staffId);
+        return ResponseEntity.ok(assignedTicket);
+    }
+
+    @PutMapping("/tickets/{ticketId}/unassign")
+    public ResponseEntity<Ticket> unassignTicket(@PathVariable Long ticketId) {
+        Ticket unassignedTicket = ticketService.unassignTicket(ticketId);
+        return ResponseEntity.ok(unassignedTicket);
+    }
+
     @DeleteMapping("/tickets/{id}")
     public ResponseEntity<Void> deleteTicket(@PathVariable Long id) {
         if (!ticketRepository.existsById(id)) {
@@ -111,5 +137,46 @@ public class AdminController {
         }
         ticketRepository.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/users/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody AdminUpdateUserRequest request) {
+        User updatedUser = userService.updateUserByAdmin(id, request);
+        return ResponseEntity.ok(updatedUser);
+    }
+
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        // Prevent admin from deleting themselves
+        Authentication authentication = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        String currentAdminEmail = authentication.getName();
+        User adminUser = userRepository.findByEmail(currentAdminEmail).orElse(null);
+        if (adminUser != null && adminUser.getId() == id) {
+            return ResponseEntity.status(403).build(); // Forbidden
+        }
+
+        if (!userRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        userRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/users")
+    public ResponseEntity<?> createUserByAdmin(@RequestBody AdminCreateUserRequest request) {
+        if (userRepository.existsByEmail(request.getEmail())) {
+            return ResponseEntity.badRequest().body("Email đã tồn tại!");
+        }
+
+        User user = User.builder()
+                .fullName(request.getFullName())
+                .email(request.getEmail())
+                .passwordHash(passwordEncoder.encode(request.getPassword()))
+                .role(request.getRole())
+                .walletBalance(BigDecimal.ZERO)
+                .build();
+
+        userRepository.save(user);
+        return ResponseEntity.status(201).body(user);
     }
 }

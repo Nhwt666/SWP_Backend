@@ -18,6 +18,8 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
 
     int countByStaffAndStatusIn(User staff, List<TicketStatus> statuses);
 
+    int countByStaffAndStatus(User staff, TicketStatus status);
+
     List<Ticket> findByStatusAndStaffIsNull(TicketStatus status);
 
     @Query("SELECT SUM(t.amount) FROM Ticket t")

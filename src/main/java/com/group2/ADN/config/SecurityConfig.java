@@ -29,10 +29,12 @@
                                     "/api/paypal/**" // Cho phép public
                             ).permitAll()
 
+                            // Admin Access
+                            .requestMatchers("/admin/**").hasRole("ADMIN")
+
                             // Role-based access
                             .requestMatchers("/customer/**").hasRole("CUSTOMER")
                             .requestMatchers("/staff/**").hasRole("STAFF")
-                            .requestMatchers("/admin/**").hasRole("ADMIN")
 
                             .requestMatchers(HttpMethod.PUT, "/tickets/*/assign").hasAnyRole("STAFF", "ADMIN")
                             .requestMatchers(HttpMethod.PUT, "/tickets/*/status").hasAnyRole("STAFF", "ADMIN")

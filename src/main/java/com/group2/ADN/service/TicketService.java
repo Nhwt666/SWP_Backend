@@ -250,5 +250,37 @@ public class TicketService {
 
         return ticketRepository.save(ticket);
     }
+
+    @Transactional
+    public Ticket assignTicketToStaff(Long ticketId, Long staffId) {
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new RuntimeException("Ticket not found with id: " + ticketId));
+        User staff = userRepository.findById(staffId)
+                .orElseThrow(() -> new RuntimeException("Staff not found with id: " + staffId));
+
+        if (staff.getRole() != UserRole.STAFF) {
+            throw new IllegalArgumentException("User is not a staff member.");
+        }
+
+        ticket.setStaff(staff);
+        // Optionally change status to IN_PROGRESS when assigning
+        if(ticket.getStatus() == TicketStatus.PENDING) {
+            ticket.setStatus(TicketStatus.IN_PROGRESS);
+        }
+        return ticketRepository.save(ticket);
+    }
+
+    @Transactional
+    public Ticket unassignTicket(Long ticketId) {
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new RuntimeException("Ticket not found with id: " + ticketId));
+
+        ticket.setStaff(null);
+        // Optionally change status back to PENDING when un-assigning
+        if(ticket.getStatus() == TicketStatus.IN_PROGRESS) {
+            ticket.setStatus(TicketStatus.PENDING);
+        }
+        return ticketRepository.save(ticket);
+    }
 }
 
