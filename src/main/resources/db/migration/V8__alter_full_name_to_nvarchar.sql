@@ -1,0 +1,1 @@
+ALTER TABLE [users] ALTER COLUMN [full_name] NVARCHAR(255) NOT NULL;
