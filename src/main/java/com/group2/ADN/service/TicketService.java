@@ -53,10 +53,9 @@ public class TicketService {
         ticket.setPhone(isEmpty(request.getPhone()) ? null : request.getPhone());
         ticket.setEmail(isEmpty(request.getEmail()) ? null : request.getEmail());
 
-        ticket.setSampleFromPersonA(request.getPersonAName());
-        ticket.setSampleFromPersonB(request.getPersonBName());
         ticket.setSample1Name(request.getSample1Name());
         ticket.setSample2Name(request.getSample2Name());
+        ticket.setAmount(request.getAmount());
         if (ticket.getMethod() == TestMethod.AT_FACILITY) {
             ticket.setAppointmentDate(request.getAppointmentDate());
         } else {

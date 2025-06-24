@@ -112,6 +112,7 @@ public class TicketController {
         ticket.setEmail(request.getEmail());
         ticket.setSample1Name(request.getSample1Name());
         ticket.setSample2Name(request.getSample2Name());
+        ticket.setAmount(amount);
         if (ticket.getMethod() == TestMethod.AT_FACILITY) {
             ticket.setAppointmentDate(request.getAppointmentDate());
         } else {

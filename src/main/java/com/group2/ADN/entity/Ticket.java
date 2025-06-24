@@ -34,6 +34,8 @@ public class Ticket {
     @Column(length = 500)
     private String reason;
 
+    @Column(length = 500)
+    private String rejectedReason;
 
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)
@@ -42,6 +44,31 @@ public class Ticket {
     @ManyToOne
     @JoinColumn(name = "staff_id")
     private User staff;  // Nullable until assigned
+
+    @OneToOne
+    @JoinColumn(name = "result_id")
+    @JsonManagedReference
+    private Result result;
+
+    @Column(length = 255)
+    private String address;
+
+    @Column(length = 20)
+    private String phone;
+
+    @Column(length = 100)
+    private String email;
+
+    @Column(name = "sample1_name")
+    private String sample1Name;
+    
+    @Column(name = "sample2_name") 
+    private String sample2Name;
+
+    @Column(name = "amount")
+    private java.math.BigDecimal amount;
+
+    private LocalDate appointmentDate;
 
     private LocalDateTime createdAt;
 
@@ -60,35 +87,4 @@ public class Ticket {
 
     @Column(length = 500)
     private String resultString;
-
-    @Column(length = 255)
-    private String address;
-
-    @Column(length = 20)
-    private String phone;
-
-    @Column(length = 100)
-    private String email;
-
-    @OneToOne
-    @JoinColumn(name = "result_id")
-    @JsonManagedReference
-    private Result result;
-
-    @Column(length = 255, columnDefinition = "nvarchar")
-    private String sampleFromPersonA;
-
-    @Column(length = 255, columnDefinition = "nvarchar")
-    private String sampleFromPersonB;
-
-    private LocalDate appointmentDate;
-
-    @Column(name = "amount")
-    private java.math.BigDecimal amount;
-
-    @Column(name = "sample1_name")
-    private String sample1Name;
-    
-    @Column(name = "sample2_name") 
-    private String sample2Name;
 }

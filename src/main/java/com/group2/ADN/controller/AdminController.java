@@ -19,6 +19,8 @@ import com.group2.ADN.dto.AdminUpdateUserRequest;
 import com.group2.ADN.dto.AdminCreateUserRequest;
 import com.group2.ADN.dto.UserWithTicketStatsDto;
 import org.springframework.security.core.Authentication;
+import org.springframework.http.HttpStatus;
+import com.group2.ADN.dto.AdminRejectTicketRequest;
 
 import java.util.List;
 import java.util.Map;
@@ -178,5 +180,20 @@ public class AdminController {
 
         userRepository.save(user);
         return ResponseEntity.status(201).body(user);
+    }
+
+    @PutMapping("/tickets/{id}/reject")
+    public ResponseEntity<?> adminRejectTicket(@PathVariable Long id, @RequestBody AdminRejectTicketRequest request) {
+        Ticket ticket = ticketRepository.findById(id)
+                .orElse(null);
+        if (ticket == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ticket not found");
+        }
+        try {
+            Ticket updated = adminService.adminRejectTicket(ticket, request.getRejectedReason());
+            return ResponseEntity.ok(updated);
+        } catch (RuntimeException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        }
     }
 }

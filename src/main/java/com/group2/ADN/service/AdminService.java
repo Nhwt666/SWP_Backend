@@ -4,6 +4,8 @@ import com.group2.ADN.repository.TopUpHistoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.group2.ADN.repository.TicketRepository;
+import com.group2.ADN.entity.Ticket;
+import com.group2.ADN.repository.UserRepository;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -15,6 +17,7 @@ import java.util.Map;
 public class AdminService {
     private final TopUpHistoryRepository topUpHistoryRepository;
     private final TicketRepository ticketRepository;
+    private final UserRepository userRepository;
 
     public Map<String, Object> getDepositStatistics() {
         Map<String, Object> stats = new HashMap<>();
@@ -47,5 +50,31 @@ public class AdminService {
         BigDecimal totalSpent = ticketRepository.sumTotalAmount();
         stats.put("totalTicketSpending", totalSpent != null ? totalSpent : BigDecimal.ZERO);
         return stats;
+    }
+
+    /**
+     * Admin rejects a ticket if it is of type OTHER and status is PENDING.
+     * @param ticket The ticket to reject
+     * @param rejectedReason The reason for rejection
+     * @return The updated ticket
+     * @throws RuntimeException if the ticket is not eligible for rejection
+     */
+    public Ticket adminRejectTicket(Ticket ticket, String rejectedReason) {
+        if (ticket.getType() != com.group2.ADN.entity.TicketType.OTHER) {
+            throw new RuntimeException("Only tickets of type OTHER can be rejected by admin.");
+        }
+        if (ticket.getStatus() != com.group2.ADN.entity.TicketStatus.PENDING) {
+            throw new RuntimeException("Only PENDING tickets can be rejected.");
+        }
+        ticket.setStatus(com.group2.ADN.entity.TicketStatus.REJECTED);
+        ticket.setRejectedReason(rejectedReason);
+        // Refund amount to user wallet if applicable
+        if (ticket.getAmount() != null && ticket.getCustomer() != null) {
+            java.math.BigDecimal currentBalance = ticket.getCustomer().getWalletBalance();
+            if (currentBalance == null) currentBalance = java.math.BigDecimal.ZERO;
+            ticket.getCustomer().setWalletBalance(currentBalance.add(ticket.getAmount()));
+            userRepository.save(ticket.getCustomer());
+        }
+        return ticketRepository.save(ticket);
     }
 } 
