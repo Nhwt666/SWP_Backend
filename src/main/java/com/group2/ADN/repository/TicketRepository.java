@@ -24,4 +24,10 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
 
     @Query("SELECT SUM(t.amount) FROM Ticket t")
     BigDecimal sumTotalAmount();
+
+    @Query("SELECT CAST(t.createdAt AS date) as date, COUNT(t.id) as count FROM Ticket t WHERE t.createdAt >= :from AND t.createdAt <= :to GROUP BY CAST(t.createdAt AS date) ORDER BY date ASC")
+    List<Object[]> countTicketsByCreatedAtBetweenGroupByDate(@org.springframework.data.repository.query.Param("from") java.time.LocalDateTime from, @org.springframework.data.repository.query.Param("to") java.time.LocalDateTime to);
+
+    @Query("SELECT t.status, COUNT(t.id) FROM Ticket t WHERE (:from IS NULL OR t.createdAt >= :from) AND (:to IS NULL OR t.createdAt <= :to) GROUP BY t.status")
+    List<Object[]> countTicketsByStatusWithFilter(@org.springframework.data.repository.query.Param("from") java.time.LocalDateTime from, @org.springframework.data.repository.query.Param("to") java.time.LocalDateTime to);
 }

@@ -196,4 +196,54 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
     }
+
+    // API trả về số lượng ticket được tạo trong 5 ngày gần nhất (cho dashboard biểu đồ cột)
+    @GetMapping("/ticket-stats/last-5-days")
+    public ResponseEntity<List<Map<String, Object>>> getTicketStatsLast5Days() {
+        java.time.LocalDate today = java.time.LocalDate.now();
+        java.time.LocalDate fromDay = today.minusDays(4); // 5 ngày gần nhất bao gồm hôm nay
+        java.time.LocalDateTime from = fromDay.atStartOfDay();
+        java.time.LocalDateTime to = today.atTime(23, 59, 59);
+
+        List<Object[]> rawStats = ticketRepository.countTicketsByCreatedAtBetweenGroupByDate(from, to);
+        Map<String, Long> dateToCount = new java.util.HashMap<>();
+        for (Object[] row : rawStats) {
+            String date = row[0].toString();
+            Long count = ((Number) row[1]).longValue();
+            dateToCount.put(date, count);
+        }
+        List<Map<String, Object>> result = new java.util.ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            java.time.LocalDate d = fromDay.plusDays(i);
+            String dateStr = d.toString();
+            long count = dateToCount.getOrDefault(dateStr, 0L);
+            result.add(Map.of("date", dateStr, "count", count));
+        }
+        return ResponseEntity.ok(result);
+    }
+
+    // API trả về số lượng ticket theo status (pie chart), có filter theo ngày (from, to, optional)
+    @GetMapping("/ticket-stats/by-status")
+    public ResponseEntity<List<Map<String, Object>>> getTicketStatsByStatus(
+            @RequestParam(required = false) String from,
+            @RequestParam(required = false) String to) {
+        java.time.LocalDateTime fromDate = (from != null && !from.isEmpty()) ? java.time.LocalDate.parse(from).atStartOfDay() : null;
+        java.time.LocalDateTime toDate = (to != null && !to.isEmpty()) ? java.time.LocalDate.parse(to).atTime(23, 59, 59) : null;
+        List<Object[]> rawStats = ticketRepository.countTicketsByStatusWithFilter(fromDate, toDate);
+        // Map status -> count
+        Map<String, Long> statusToCount = new java.util.HashMap<>();
+        for (Object[] row : rawStats) {
+            String status = row[0].toString();
+            Long count = ((Number) row[1]).longValue();
+            statusToCount.put(status, count);
+        }
+        // Đảm bảo đủ 4 trạng thái
+        String[] allStatus = {"PENDING", "IN_PROGRESS", "COMPLETED", "REJECTED"};
+        List<Map<String, Object>> result = new java.util.ArrayList<>();
+        for (String status : allStatus) {
+            long count = statusToCount.getOrDefault(status, 0L);
+            result.add(Map.of("status", status, "count", count));
+        }
+        return ResponseEntity.ok(result);
+    }
 }
