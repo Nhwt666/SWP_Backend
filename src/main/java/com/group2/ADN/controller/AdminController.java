@@ -190,7 +190,7 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ticket not found");
         }
         try {
-            Ticket updated = adminService.adminRejectTicket(ticket, request.getRejectedReason());
+            Ticket updated = adminService.adminRejectTicket(ticket, request.getRejectedReason(), request.getStatus());
             return ResponseEntity.ok(updated);
         } catch (RuntimeException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());

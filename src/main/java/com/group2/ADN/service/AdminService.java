@@ -56,17 +56,25 @@ public class AdminService {
      * Admin rejects a ticket if it is of type OTHER and status is PENDING.
      * @param ticket The ticket to reject
      * @param rejectedReason The reason for rejection
+     * @param status The status to set (should be REJECTED)
      * @return The updated ticket
      * @throws RuntimeException if the ticket is not eligible for rejection
      */
-    public Ticket adminRejectTicket(Ticket ticket, String rejectedReason) {
+    public Ticket adminRejectTicket(Ticket ticket, String rejectedReason, String status) {
         if (ticket.getType() != com.group2.ADN.entity.TicketType.OTHER) {
             throw new RuntimeException("Only tickets of type OTHER can be rejected by admin.");
         }
         if (ticket.getStatus() != com.group2.ADN.entity.TicketStatus.PENDING) {
             throw new RuntimeException("Only PENDING tickets can be rejected.");
         }
-        ticket.setStatus(com.group2.ADN.entity.TicketStatus.REJECTED);
+        // Nếu status truyền lên hợp lệ thì set, không thì mặc định REJECTED
+        com.group2.ADN.entity.TicketStatus newStatus;
+        try {
+            newStatus = (status != null) ? com.group2.ADN.entity.TicketStatus.valueOf(status) : com.group2.ADN.entity.TicketStatus.REJECTED;
+        } catch (Exception e) {
+            newStatus = com.group2.ADN.entity.TicketStatus.REJECTED;
+        }
+        ticket.setStatus(newStatus);
         ticket.setRejectedReason(rejectedReason);
         // Refund amount to user wallet if applicable
         if (ticket.getAmount() != null && ticket.getCustomer() != null) {
