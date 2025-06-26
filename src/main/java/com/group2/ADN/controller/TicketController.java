@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 import com.group2.ADN.entity.TicketType;
 import com.group2.ADN.entity.TestMethod;
+import com.group2.ADN.dto.TicketFeedbackRequest;
+import org.springframework.http.HttpStatus;
 
 import java.math.BigDecimal;
 import java.util.List;

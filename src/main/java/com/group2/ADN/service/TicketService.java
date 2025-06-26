@@ -16,6 +16,9 @@ import java.util.Optional;
 import java.time.LocalDateTime;
 import com.group2.ADN.dto.AdminUpdateTicketRequest;
 import com.group2.ADN.dto.AdminCreateTicketRequest;
+import com.group2.ADN.entity.TicketFeedback;
+import com.group2.ADN.repository.TicketFeedbackRepository;
+import com.group2.ADN.dto.TicketFeedbackRequest;
 
 @Service
 @Transactional
@@ -29,6 +32,9 @@ public class TicketService {
 
     @Autowired
     private ResultRepository resultRepository;
+
+    @Autowired
+    private TicketFeedbackRepository ticketFeedbackRepository;
 
     public Ticket createTicketFromRequest(TicketRequest request) {
         Ticket ticket = new Ticket();
@@ -293,6 +299,30 @@ public class TicketService {
             ticket.setStatus(TicketStatus.PENDING);
         }
         return ticketRepository.save(ticket);
+    }
+
+    public TicketFeedback submitFeedback(Ticket ticket, User user, TicketFeedbackRequest request) {
+        if (ticketFeedbackRepository.findByTicketAndUser(ticket, user).isPresent()) {
+            throw new RuntimeException("Feedback already submitted for this ticket");
+        }
+        TicketFeedback feedback = new TicketFeedback();
+        feedback.setTicket(ticket);
+        feedback.setUser(user);
+        feedback.setFeedback(request.getFeedback());
+        feedback.setRating(request.getRating());
+        return ticketFeedbackRepository.save(feedback);
+    }
+
+    public TicketFeedback updateFeedback(Ticket ticket, User user, TicketFeedbackRequest request) {
+        TicketFeedback feedback = ticketFeedbackRepository.findByTicketAndUser(ticket, user)
+            .orElseThrow(() -> new RuntimeException("No feedback to update. Please submit feedback first."));
+        feedback.setFeedback(request.getFeedback());
+        feedback.setRating(request.getRating());
+        return ticketFeedbackRepository.save(feedback);
+    }
+
+    public TicketFeedback getFeedback(Ticket ticket, User user) {
+        return ticketFeedbackRepository.findByTicketAndUser(ticket, user).orElse(null);
     }
 }
 
