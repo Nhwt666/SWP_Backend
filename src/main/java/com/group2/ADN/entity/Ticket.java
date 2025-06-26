@@ -74,6 +74,8 @@ public class Ticket {
 
     private LocalDateTime updatedAt;
 
+    private LocalDateTime completedAt;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();

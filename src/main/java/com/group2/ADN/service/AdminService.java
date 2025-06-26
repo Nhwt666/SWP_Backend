@@ -85,4 +85,21 @@ public class AdminService {
         }
         return ticketRepository.save(ticket);
     }
+
+    public List<Map<String, Object>> getRecentCompletedTickets() {
+        java.time.LocalDateTime now = java.time.LocalDateTime.now();
+        java.time.LocalDateTime sevenDaysAgo = now.minusDays(7);
+        List<Ticket> tickets = ticketRepository.findByStatusAndCompletedAtBetween(
+            com.group2.ADN.entity.TicketStatus.COMPLETED, sevenDaysAgo, now);
+        List<Map<String, Object>> result = new java.util.ArrayList<>();
+        for (Ticket t : tickets) {
+            Map<String, Object> map = new java.util.HashMap<>();
+            map.put("id", t.getId());
+            map.put("customerName", t.getCustomer() != null ? t.getCustomer().getFullName() : null);
+            map.put("status", t.getStatus());
+            map.put("completedAt", t.getCompletedAt());
+            result.add(map);
+        }
+        return result;
+    }
 } 

@@ -30,4 +30,6 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
 
     @Query("SELECT t.status, COUNT(t.id) FROM Ticket t WHERE (:from IS NULL OR t.createdAt >= :from) AND (:to IS NULL OR t.createdAt <= :to) GROUP BY t.status")
     List<Object[]> countTicketsByStatusWithFilter(@org.springframework.data.repository.query.Param("from") java.time.LocalDateTime from, @org.springframework.data.repository.query.Param("to") java.time.LocalDateTime to);
+
+    List<Ticket> findByStatusAndCompletedAtBetween(TicketStatus status, java.time.LocalDateTime from, java.time.LocalDateTime to);
 }

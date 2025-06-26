@@ -190,7 +190,7 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ticket not found");
         }
         try {
-            Ticket updated = adminService.adminRejectTicket(ticket, request.getRejectedReason(), request.getStatus());
+            Ticket updated = adminService.adminRejectTicket(ticket, request.getRejectedReason(), null);
             return ResponseEntity.ok(updated);
         } catch (RuntimeException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
@@ -245,5 +245,10 @@ public class AdminController {
             result.add(Map.of("status", status, "count", count));
         }
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/recent-completed-tickets")
+    public ResponseEntity<List<Map<String, Object>>> getRecentCompletedTickets() {
+        return ResponseEntity.ok(adminService.getRecentCompletedTickets());
     }
 }

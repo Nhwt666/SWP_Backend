@@ -118,6 +118,10 @@ public class TicketService {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new RuntimeException("Ticket not found"));
 
+        // Nếu chuyển sang COMPLETED thì set completedAt
+        if (newStatus == TicketStatus.COMPLETED && ticket.getCompletedAt() == null) {
+            ticket.setCompletedAt(java.time.LocalDateTime.now());
+        }
         ticket.setStatus(newStatus);
         return ticketRepository.save(ticket);
     }
@@ -128,6 +132,9 @@ public class TicketService {
 
         ticket.setStatus(TicketStatus.COMPLETED);
         ticket.setResultString(result);
+        if (ticket.getCompletedAt() == null) {
+            ticket.setCompletedAt(java.time.LocalDateTime.now());
+        }
         return ticketRepository.save(ticket);
     }
 
@@ -166,6 +173,9 @@ public class TicketService {
         resultRepository.save(result);
         ticket.setResult(result);
         ticket.setStatus(TicketStatus.COMPLETED);
+        if (ticket.getCompletedAt() == null) {
+            ticket.setCompletedAt(java.time.LocalDateTime.now());
+        }
         return ticketRepository.save(ticket);
     }
 
@@ -210,6 +220,9 @@ public class TicketService {
                 .orElseThrow(() -> new RuntimeException("Ticket not found with id: " + ticketId));
 
         if (request.getStatus() != null) {
+            if (request.getStatus() == TicketStatus.COMPLETED && ticket.getCompletedAt() == null) {
+                ticket.setCompletedAt(java.time.LocalDateTime.now());
+            }
             ticket.setStatus(request.getStatus());
         }
 
