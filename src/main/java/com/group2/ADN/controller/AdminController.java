@@ -21,6 +21,8 @@ import com.group2.ADN.dto.UserWithTicketStatsDto;
 import org.springframework.security.core.Authentication;
 import org.springframework.http.HttpStatus;
 import com.group2.ADN.dto.AdminRejectTicketRequest;
+import com.group2.ADN.service.ReviewService;
+import com.group2.ADN.dto.ReviewDTO;
 
 import java.util.List;
 import java.util.Map;
@@ -37,6 +39,7 @@ public class AdminController {
     private final AdminService adminService;
     private final TicketService ticketService;
     private final UserService userService;
+    private final ReviewService reviewService;
 
     // ✅ Kiểm tra phân quyền admin
     @GetMapping("/Test_Phan_Quyen")
@@ -250,5 +253,74 @@ public class AdminController {
     @GetMapping("/recent-completed-tickets")
     public ResponseEntity<List<Map<String, Object>>> getRecentCompletedTickets() {
         return ResponseEntity.ok(adminService.getRecentCompletedTickets());
+    }
+
+    @GetMapping("/reviews")
+    public ResponseEntity<List<Map<String, Object>>> getAllReviews() {
+        // Get feedback from both tickets table and reviews table
+        List<Map<String, Object>> allFeedback = new java.util.ArrayList<>();
+        
+        // Get feedback from tickets table
+        List<Ticket> ticketsWithFeedback = ticketRepository.findByRatingIsNotNullOrFeedbackIsNotNull();
+        for (Ticket ticket : ticketsWithFeedback) {
+            Map<String, Object> feedback = new java.util.HashMap<>();
+            feedback.put("id", ticket.getId());
+            feedback.put("ticketId", "TK" + String.format("%03d", ticket.getId()));
+            feedback.put("customerName", ticket.getCustomer() != null ? ticket.getCustomer().getFullName() : "Unknown");
+            feedback.put("rating", ticket.getRating());
+            feedback.put("feedback", ticket.getFeedback());
+            feedback.put("feedbackDate", ticket.getFeedbackDate() != null ? ticket.getFeedbackDate().toString() : null);
+            feedback.put("status", ticket.getStatus().toString());
+            feedback.put("type", ticket.getType().toString());
+            feedback.put("source", "tickets");
+            allFeedback.add(feedback);
+        }
+        
+        // Get feedback from reviews table
+        List<ReviewDTO> reviews = reviewService.findAllReviews();
+        for (ReviewDTO review : reviews) {
+            Map<String, Object> feedback = new java.util.HashMap<>();
+            feedback.put("id", review.getId());
+            feedback.put("ticketId", review.getTicketId());
+            feedback.put("customerName", review.getCustomerName());
+            feedback.put("rating", review.getRating());
+            feedback.put("feedback", review.getFeedback());
+            feedback.put("feedbackDate", review.getCreatedAt());
+            feedback.put("source", "reviews");
+            allFeedback.add(feedback);
+        }
+        
+        // Sort by feedback date (newest first)
+        allFeedback.sort((a, b) -> {
+            String dateA = (String) a.get("feedbackDate");
+            String dateB = (String) b.get("feedbackDate");
+            if (dateA == null) return 1;
+            if (dateB == null) return -1;
+            return dateB.compareTo(dateA);
+        });
+        
+        return ResponseEntity.ok(allFeedback);
+    }
+
+    @GetMapping("/tickets-with-feedback")
+    public ResponseEntity<List<Map<String, Object>>> getTicketsWithFeedback() {
+        List<Ticket> ticketsWithFeedback = ticketRepository.findByRatingIsNotNullOrFeedbackIsNotNull();
+        
+        List<Map<String, Object>> result = ticketsWithFeedback.stream()
+            .map(ticket -> {
+                Map<String, Object> map = new java.util.HashMap<>();
+                map.put("id", ticket.getId());
+                map.put("ticketId", "TK" + String.format("%03d", ticket.getId()));
+                map.put("customerName", ticket.getCustomer() != null ? ticket.getCustomer().getFullName() : "Unknown");
+                map.put("rating", ticket.getRating());
+                map.put("feedback", ticket.getFeedback());
+                map.put("feedbackDate", ticket.getFeedbackDate() != null ? ticket.getFeedbackDate().toString() : null);
+                map.put("status", ticket.getStatus().toString());
+                map.put("type", ticket.getType().toString());
+                return map;
+            })
+            .collect(java.util.stream.Collectors.toList());
+        
+        return ResponseEntity.ok(result);
     }
 }

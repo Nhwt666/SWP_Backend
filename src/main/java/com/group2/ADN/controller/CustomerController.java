@@ -8,13 +8,19 @@ import com.group2.ADN.entity.User;
 import com.group2.ADN.entity.TicketFeedback;
 import com.group2.ADN.service.UserService;
 import com.group2.ADN.service.TicketService;
+import com.group2.ADN.service.ReviewService;
+import com.group2.ADN.dto.FeedbackRequest;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
+@Slf4j
 @RestController
 @RequestMapping("/customer")
 public class CustomerController {
@@ -24,6 +30,9 @@ public class CustomerController {
 
     @Autowired
     private TicketService ticketService;
+
+    @Autowired
+    private ReviewService reviewService;
 
     @GetMapping("/Test_Phan_Quyen")
     public ResponseEntity<String> helloCustomer() {
@@ -37,46 +46,35 @@ public class CustomerController {
         return ResponseEntity.ok("Cập nhật thông tin thành công");
     }
 
-    @PutMapping("/tickets/{id}/feedback")
-    public ResponseEntity<?> submitFeedback(@PathVariable Long id, @RequestBody TicketFeedbackRequest request, Authentication authentication) {
-        String email = authentication.getName();
-        User user = ticketService.findUserByEmail(email);
-        Ticket ticket = ticketService.getTicketById(id).orElse(null);
-        if (ticket == null || !ticket.getCustomer().getId().equals(user.getId())) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Not allowed");
+    @PutMapping("/tickets/{ticketId}/feedback")
+    public ResponseEntity<?> submitFeedback(
+            @PathVariable Long ticketId,
+            @Valid @RequestBody FeedbackRequest request,
+            Authentication authentication) {
+        try {
+            log.info("Feedback request for ticket: {}, user: {}", ticketId, authentication.getName());
+            
+            String email = authentication.getName();
+            User user = ticketService.findUserByEmail(email);
+            
+            Ticket updatedTicket = ticketService.submitTicketFeedback(ticketId, request, user.getId());
+            
+            log.info("Feedback submitted successfully for ticket: {}", ticketId);
+            
+            return ResponseEntity.ok(Map.of(
+                "message", "Feedback submitted successfully",
+                "ticketId", updatedTicket.getId(),
+                "rating", updatedTicket.getRating(),
+                "feedback", updatedTicket.getFeedback(),
+                "feedbackDate", updatedTicket.getFeedbackDate()
+            ));
+        } catch (RuntimeException e) {
+            log.error("Error submitting feedback for ticket {}: {}", ticketId, e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of(
+                "error", "Bad Request",
+                "message", e.getMessage()
+            ));
         }
-        if (ticket.getStatus() != TicketStatus.COMPLETED) {
-            return ResponseEntity.badRequest().body("Can only feedback on completed tickets");
-        }
-        if (ticketService.getFeedback(ticket, user) != null) {
-            return ResponseEntity.badRequest().body("Feedback already submitted for this ticket");
-        }
-        if (request.getRating() != null && (request.getRating() < 1 || request.getRating() > 5)) {
-            return ResponseEntity.badRequest().body("Rating must be between 1 and 5");
-        }
-        ticketService.submitFeedback(ticket, user, request);
-        return ResponseEntity.ok("Feedback submitted");
-    }
-
-    @PutMapping("/tickets/{id}/feedback/update")
-    public ResponseEntity<?> updateFeedback(@PathVariable Long id, @RequestBody TicketFeedbackRequest request, Authentication authentication) {
-        String email = authentication.getName();
-        User user = ticketService.findUserByEmail(email);
-        Ticket ticket = ticketService.getTicketById(id).orElse(null);
-        if (ticket == null || !ticket.getCustomer().getId().equals(user.getId())) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Not allowed");
-        }
-        if (ticket.getStatus() != TicketStatus.COMPLETED) {
-            return ResponseEntity.badRequest().body("Can only update feedback on completed tickets");
-        }
-        if (ticketService.getFeedback(ticket, user) == null) {
-            return ResponseEntity.badRequest().body("No feedback to update. Please submit feedback first.");
-        }
-        if (request.getRating() != null && (request.getRating() < 1 || request.getRating() > 5)) {
-            return ResponseEntity.badRequest().body("Rating must be between 1 and 5");
-        }
-        ticketService.updateFeedback(ticket, user, request);
-        return ResponseEntity.ok("Feedback updated");
     }
 
 }

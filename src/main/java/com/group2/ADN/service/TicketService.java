@@ -2,6 +2,7 @@ package com.group2.ADN.service;
 
 import com.group2.ADN.dto.TicketRequest;
 import com.group2.ADN.dto.AssignResultRequest;
+import com.group2.ADN.dto.FeedbackRequest;
 import com.group2.ADN.entity.*;
 import com.group2.ADN.repository.TicketRepository;
 import com.group2.ADN.repository.UserRepository;
@@ -323,6 +324,42 @@ public class TicketService {
 
     public TicketFeedback getFeedback(Ticket ticket, User user) {
         return ticketFeedbackRepository.findByTicketAndUser(ticket, user).orElse(null);
+    }
+
+    /**
+     * Submit feedback directly to a ticket
+     */
+    @Transactional
+    public Ticket submitTicketFeedback(Long ticketId, FeedbackRequest request, Long userId) {
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new RuntimeException("Ticket not found"));
+
+        // Check if user is the ticket owner
+        if (!ticket.getCustomer().getId().equals(userId)) {
+            throw new RuntimeException("Not the ticket owner");
+        }
+
+        // Check if ticket is completed
+        if (ticket.getStatus() != TicketStatus.COMPLETED) {
+            throw new RuntimeException("Ticket not completed");
+        }
+
+        // Check if feedback already exists
+        if (ticket.getFeedback() != null) {
+            throw new RuntimeException("Feedback already exists");
+        }
+
+        // Validate rating
+        if (request.getRating() < 1 || request.getRating() > 5) {
+            throw new RuntimeException("Rating must be between 1-5");
+        }
+
+        // Set feedback
+        ticket.setRating(request.getRating());
+        ticket.setFeedback(request.getFeedback());
+        ticket.setFeedbackDate(LocalDateTime.now());
+
+        return ticketRepository.save(ticket);
     }
 }
 

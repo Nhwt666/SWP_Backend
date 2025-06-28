@@ -32,4 +32,7 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     List<Object[]> countTicketsByStatusWithFilter(@org.springframework.data.repository.query.Param("from") java.time.LocalDateTime from, @org.springframework.data.repository.query.Param("to") java.time.LocalDateTime to);
 
     List<Ticket> findByStatusAndCompletedAtBetween(TicketStatus status, java.time.LocalDateTime from, java.time.LocalDateTime to);
+
+    @Query("SELECT t FROM Ticket t WHERE t.rating IS NOT NULL OR t.feedback IS NOT NULL ORDER BY t.feedbackDate DESC")
+    List<Ticket> findByRatingIsNotNullOrFeedbackIsNotNull();
 }

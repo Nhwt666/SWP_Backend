@@ -76,6 +76,15 @@ public class Ticket {
 
     private LocalDateTime completedAt;
 
+    @Column(name = "rating")
+    private Integer rating;
+
+    @Column(name = "feedback", columnDefinition = "NVARCHAR(1000)")
+    private String feedback;
+
+    @Column(name = "feedback_date")
+    private LocalDateTime feedbackDate;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();

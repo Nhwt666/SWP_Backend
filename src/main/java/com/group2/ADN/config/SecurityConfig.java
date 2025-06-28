@@ -35,6 +35,9 @@
                             // Role-based access
                             .requestMatchers("/customer/**").hasRole("CUSTOMER")
                             .requestMatchers("/staff/**").hasRole("STAFF")
+                            .requestMatchers("/notifications/**").hasRole("CUSTOMER")
+                            .requestMatchers("/admin/reviews").hasRole("ADMIN")
+                            .requestMatchers("/admin/tickets-with-feedback").hasRole("ADMIN")
 
                             .requestMatchers(HttpMethod.PUT, "/tickets/*/assign").hasAnyRole("STAFF", "ADMIN")
                             .requestMatchers(HttpMethod.PUT, "/tickets/*/status").hasAnyRole("STAFF", "ADMIN")
