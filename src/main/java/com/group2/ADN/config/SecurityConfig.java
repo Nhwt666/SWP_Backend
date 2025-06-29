@@ -8,6 +8,7 @@
     import org.springframework.security.config.annotation.web.builders.HttpSecurity;
     import org.springframework.security.web.SecurityFilterChain;
     import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+    import org.springframework.security.config.Customizer;
 
     @Configuration
     @RequiredArgsConstructor
@@ -32,7 +33,7 @@
                             // Admin Access
                             .requestMatchers("/admin/**").hasRole("ADMIN")
 
-                            // Role-based access
+                            // Role-based access - Allow CUSTOMER, STAFF, ADMIN for ticket operations
                             .requestMatchers("/customer/**").hasRole("CUSTOMER")
                             .requestMatchers("/staff/**").hasRole("STAFF")
                             .requestMatchers("/notifications/**").hasRole("CUSTOMER")
@@ -42,13 +43,25 @@
                             .requestMatchers(HttpMethod.PUT, "/tickets/*/assign").hasAnyRole("STAFF", "ADMIN")
                             .requestMatchers(HttpMethod.PUT, "/tickets/*/status").hasAnyRole("STAFF", "ADMIN")
                             .requestMatchers(HttpMethod.GET, "/tickets/**").hasAnyRole("CUSTOMER", "STAFF", "ADMIN")
-                            .requestMatchers(HttpMethod.POST, "/tickets/**").hasRole("CUSTOMER")
+                            .requestMatchers(HttpMethod.POST, "/tickets/**").hasAnyRole("CUSTOMER", "STAFF", "ADMIN")
 
                             .anyRequest().authenticated()
                     )
                     .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                     .formLogin(form -> form.disable())
                     .httpBasic(basic -> basic.disable())
+                    .exceptionHandling(exception -> exception
+                            .authenticationEntryPoint((request, response, authException) -> {
+                                response.setStatus(401);
+                                response.setContentType("application/json");
+                                response.getWriter().write("{\"error\":\"Unauthorized\",\"message\":\"Access denied - Invalid or missing token\"}");
+                            })
+                            .accessDeniedHandler((request, response, accessDeniedException) -> {
+                                response.setStatus(403);
+                                response.setContentType("application/json");
+                                response.getWriter().write("{\"error\":\"Forbidden\",\"message\":\"Insufficient permissions - You don't have access to this resource\"}");
+                            })
+                    )
                     .build();
         }
     }

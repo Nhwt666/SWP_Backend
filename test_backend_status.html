@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backend Status Test - Ticket Creation</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fafafa;
+        }
+        .test-section h3 {
+            color: #34495e;
+            margin-top: 0;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        button.danger {
+            background-color: #e74c3c;
+        }
+        button.danger:hover {
+            background-color: #c0392b;
+        }
+        button.success {
+            background-color: #27ae60;
+        }
+        button.success:hover {
+            background-color: #229954;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .result.success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .result.error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .result.info {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .status-confirmed {
+            background-color: #28a745;
+            color: white;
+        }
+        .status-pending {
+            background-color: #ffc107;
+            color: #212529;
+        }
+        .status-error {
+            background-color: #dc3545;
+            color: white;
+        }
+        .quick-test {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .quick-test-item {
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Backend Status Test - Ticket Creation</h1>
+        
+        <div class="test-section">
+            <h3>🔧 Configuration</h3>
+            <div class="form-group">
+                <label for="baseUrl">Base URL:</label>
+                <input type="text" id="baseUrl" value="http://localhost:8080" placeholder="http://localhost:8080">
+            </div>
+            <div class="form-group">
+                <label for="authToken">JWT Token:</label>
+                <input type="text" id="authToken" placeholder="Bearer YOUR_TOKEN_HERE">
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>⚡ Quick Tests</h3>
+            <div class="quick-test">
+                <div class="quick-test-item">
+                    <h4>CIVIL SELF_TEST CONFIRMED</h4>
+                    <p>Test creating CIVIL SELF_TEST with CONFIRMED status</p>
+                    <button onclick="runQuickTest('civil-self-confirmed')" class="success">Test</button>
+                    <div id="result-civil-self-confirmed" class="result"></div>
+                </div>
+                
+                <div class="quick-test-item">
+                    <h4>CIVIL AT_FACILITY PENDING</h4>
+                    <p>Test creating CIVIL AT_FACILITY with default PENDING status</p>
+                    <button onclick="runQuickTest('civil-at-pending')" class="success">Test</button>
+                    <div id="result-civil-at-pending" class="result"></div>
+                </div>
+                
+                <div class="quick-test-item">
+                    <h4>ADMINISTRATIVE PENDING</h4>
+                    <p>Test creating ADMINISTRATIVE with default PENDING status</p>
+                    <button onclick="runQuickTest('admin-pending')" class="success">Test</button>
+                    <div id="result-admin-pending" class="result"></div>
+                </div>
+                
+                <div class="quick-test-item">
+                    <h4>Invalid Data</h4>
+                    <p>Test with missing required fields</p>
+                    <button onclick="runQuickTest('invalid-data')" class="danger">Test</button>
+                    <div id="result-invalid-data" class="result"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>📝 Custom Test</h3>
+            <div class="form-group">
+                <label for="ticketType">Ticket Type:</label>
+                <select id="ticketType">
+                    <option value="CIVIL">CIVIL</option>
+                    <option value="ADMINISTRATIVE">ADMINISTRATIVE</option>
+                    <option value="OTHER">OTHER</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="ticketMethod">Method:</label>
+                <select id="ticketMethod">
+                    <option value="SELF_TEST">SELF_TEST</option>
+                    <option value="AT_FACILITY">AT_FACILITY</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="ticketStatus">Status:</label>
+                <select id="ticketStatus">
+                    <option value="">Default (PENDING)</option>
+                    <option value="CONFIRMED">CONFIRMED</option>
+                    <option value="PENDING">PENDING</option>
+                    <option value="IN_PROGRESS">IN_PROGRESS</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="ticketAmount">Amount:</label>
+                <input type="number" id="ticketAmount" value="500000" placeholder="500000">
+            </div>
+            <div class="form-group">
+                <label for="ticketReason">Reason:</label>
+                <textarea id="ticketReason" rows="3" placeholder="DNA testing reason">DNA testing for custom test</textarea>
+            </div>
+            <button onclick="runCustomTest()" class="success">Run Custom Test</button>
+            <div id="result-custom" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>📊 Test Results Summary</h3>
+            <button onclick="runAllTests()" class="success">Run All Tests</button>
+            <button onclick="clearResults()" class="danger">Clear Results</button>
+            <div id="result-summary" class="result info"></div>
+        </div>
+    </div>
+
+    <script>
+        const testCases = {
+            'civil-self-confirmed': {
+                name: 'CIVIL SELF_TEST CONFIRMED',
+                body: {
+                    type: 'CIVIL',
+                    method: 'SELF_TEST',
+                    status: 'CONFIRMED',
+                    amount: 500000,
+                    reason: 'DNA testing for civil case',
+                    address: '123 Test Street',
+                    phone: '0123456789',
+                    email: 'test@example.com',
+                    sample1Name: 'Sample A',
+                    sample2Name: 'Sample B'
+                },
+                expectedStatus: 'CONFIRMED'
+            },
+            'civil-at-pending': {
+                name: 'CIVIL AT_FACILITY PENDING',
+                body: {
+                    type: 'CIVIL',
+                    method: 'AT_FACILITY',
+                    amount: 500000,
+                    reason: 'DNA testing at facility',
+                    address: '123 Test Street',
+                    phone: '0123456789',
+                    email: 'test@example.com',
+                    sample1Name: 'Sample A',
+                    sample2Name: 'Sample B',
+                    appointmentDate: '2024-01-15'
+                },
+                expectedStatus: 'PENDING'
+            },
+            'admin-pending': {
+                name: 'ADMINISTRATIVE PENDING',
+                body: {
+                    type: 'ADMINISTRATIVE',
+                    method: 'AT_FACILITY',
+                    amount: 500000,
+                    reason: 'Administrative DNA testing',
+                    address: '123 Test Street',
+                    phone: '0123456789',
+                    email: 'test@example.com',
+                    sample1Name: 'Sample A',
+                    sample2Name: 'Sample B',
+                    appointmentDate: '2024-01-15'
+                },
+                expectedStatus: 'PENDING'
+            },
+            'invalid-data': {
+                name: 'Invalid Data',
+                body: {
+                    type: 'CIVIL'
+                    // Missing required fields
+                },
+                expectedStatus: 'ERROR'
+            }
+        };
+
+        async function runQuickTest(testKey) {
+            const testCase = testCases[testKey];
+            const resultDiv = document.getElementById(`result-${testKey}`);
+            
+            resultDiv.className = 'result info';
+            resultDiv.textContent = `Running test: ${testCase.name}...`;
+            
+            try {
+                const response = await testEndpoint('/tickets/after-payment', testCase.body);
+                displayResult(resultDiv, response, testCase.expectedStatus);
+            } catch (error) {
+                displayError(resultDiv, error);
+            }
+        }
+
+        async function runCustomTest() {
+            const resultDiv = document.getElementById('result-custom');
+            const body = {
+                type: document.getElementById('ticketType').value,
+                method: document.getElementById('ticketMethod').value,
+                amount: parseInt(document.getElementById('ticketAmount').value),
+                reason: document.getElementById('ticketReason').value,
+                address: '123 Test Street',
+                phone: '0123456789',
+                email: 'test@example.com',
+                sample1Name: 'Sample A',
+                sample2Name: 'Sample B'
+            };
+            
+            const status = document.getElementById('ticketStatus').value;
+            if (status) {
+                body.status = status;
+            }
+            
+            if (body.method === 'AT_FACILITY') {
+                body.appointmentDate = '2024-01-15';
+            }
+            
+            resultDiv.className = 'result info';
+            resultDiv.textContent = 'Running custom test...';
+            
+            try {
+                const response = await testEndpoint('/tickets/after-payment', body);
+                const expectedStatus = status || 'PENDING';
+                displayResult(resultDiv, response, expectedStatus);
+            } catch (error) {
+                displayError(resultDiv, error);
+            }
+        }
+
+        async function runAllTests() {
+            const resultDiv = document.getElementById('result-summary');
+            resultDiv.className = 'result info';
+            resultDiv.textContent = 'Running all tests...\n';
+            
+            const results = [];
+            
+            for (const [key, testCase] of Object.entries(testCases)) {
+                try {
+                    const response = await testEndpoint('/tickets/after-payment', testCase.body);
+                    const success = response.status === testCase.expectedStatus;
+                    results.push({
+                        name: testCase.name,
+                        status: response.status,
+                        expected: testCase.expectedStatus,
+                        success: success
+                    });
+                    resultDiv.textContent += `✅ ${testCase.name}: ${response.status}\n`;
+                } catch (error) {
+                    results.push({
+                        name: testCase.name,
+                        status: 'ERROR',
+                        expected: testCase.expectedStatus,
+                        success: testCase.expectedStatus === 'ERROR'
+                    });
+                    resultDiv.textContent += `❌ ${testCase.name}: ERROR\n`;
+                }
+            }
+            
+            const successCount = results.filter(r => r.success).length;
+            const totalCount = results.length;
+            
+            resultDiv.textContent += `\n📊 Summary: ${successCount}/${totalCount} tests passed`;
+            
+            if (successCount === totalCount) {
+                resultDiv.className = 'result success';
+            } else {
+                resultDiv.className = 'result error';
+            }
+        }
+
+        async function testEndpoint(endpoint, body) {
+            const baseUrl = document.getElementById('baseUrl').value;
+            const authToken = document.getElementById('authToken').value;
+            
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+            
+            if (authToken) {
+                headers['Authorization'] = `Bearer ${authToken}`;
+            }
+            
+            const response = await fetch(`${baseUrl}${endpoint}`, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(body)
+            });
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`HTTP ${response.status}: ${errorText}`);
+            }
+            
+            return await response.json();
+        }
+
+        function displayResult(resultDiv, response, expectedStatus) {
+            const success = response.status === expectedStatus;
+            resultDiv.className = success ? 'result success' : 'result error';
+            
+            let statusBadge = '';
+            if (response.status === 'CONFIRMED') {
+                statusBadge = '<span class="status-badge status-confirmed">CONFIRMED</span>';
+            } else if (response.status === 'PENDING') {
+                statusBadge = '<span class="status-badge status-pending">PENDING</span>';
+            }
+            
+            resultDiv.innerHTML = `
+                <strong>✅ Success</strong>${statusBadge}<br>
+                <strong>Status:</strong> ${response.status}<br>
+                <strong>Expected:</strong> ${expectedStatus}<br>
+                <strong>ID:</strong> ${response.id}<br>
+                <strong>Type:</strong> ${response.type}<br>
+                <strong>Method:</strong> ${response.method}<br>
+                <strong>Response:</strong><br>
+                <pre>${JSON.stringify(response, null, 2)}</pre>
+            `;
+        }
+
+        function displayError(resultDiv, error) {
+            resultDiv.className = 'result error';
+            resultDiv.innerHTML = `
+                <strong>❌ Error</strong><br>
+                <strong>Message:</strong> ${error.message}<br>
+                <strong>Details:</strong><br>
+                <pre>${error.stack || error.message}</pre>
+            `;
+        }
+
+        function clearResults() {
+            const resultDivs = document.querySelectorAll('.result');
+            resultDivs.forEach(div => {
+                div.textContent = '';
+                div.className = 'result';
+            });
+        }
+
+        // Auto-run configuration check
+        document.addEventListener('DOMContentLoaded', function() {
+            const resultDiv = document.getElementById('result-summary');
+            resultDiv.className = 'result info';
+            resultDiv.textContent = 'Ready to test backend endpoints!\n\n' +
+                '1. Configure Base URL and JWT Token\n' +
+                '2. Use Quick Tests for common scenarios\n' +
+                '3. Use Custom Test for specific cases\n' +
+                '4. Run All Tests for comprehensive validation\n\n' +
+                'Expected Results:\n' +
+                '- CIVIL SELF_TEST should have status CONFIRMED\n' +
+                '- Other ticket types should have status PENDING\n' +
+                '- Invalid data should return error';
+        });
+    </script>
+</body>
+</html> 

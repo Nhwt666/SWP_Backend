@@ -2,6 +2,7 @@ package com.group2.ADN.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import com.group2.ADN.entity.TicketStatus;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.LocalDate;
@@ -13,6 +14,7 @@ public class TicketRequest {
     private String method;
     private String reason;
     private Long customerId;
+    private TicketStatus status;
 
     private String address;
     private String phone;

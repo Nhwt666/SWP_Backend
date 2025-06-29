@@ -20,6 +20,7 @@ import com.group2.ADN.dto.AdminCreateTicketRequest;
 import com.group2.ADN.entity.TicketFeedback;
 import com.group2.ADN.repository.TicketFeedbackRepository;
 import com.group2.ADN.dto.TicketFeedbackRequest;
+import com.group2.ADN.service.NotificationService;
 
 @Service
 @Transactional
@@ -37,6 +38,9 @@ public class TicketService {
     @Autowired
     private TicketFeedbackRepository ticketFeedbackRepository;
 
+    @Autowired
+    private NotificationService notificationService;
+
     public Ticket createTicketFromRequest(TicketRequest request) {
         Ticket ticket = new Ticket();
 
@@ -48,7 +52,22 @@ public class TicketService {
         }
 
         ticket.setReason(request.getReason());
-        ticket.setStatus(TicketStatus.PENDING);
+        
+        // Debug logs để kiểm tra status
+        System.out.println("🔍 DEBUG: createTicketFromRequest");
+        System.out.println("   Request status: " + request.getStatus());
+        System.out.println("   Request type: " + request.getType());
+        System.out.println("   Request method: " + request.getMethod());
+        System.out.println("   Is CIVIL SELF_TEST: " + (request.getType().equals("CIVIL") && request.getMethod().equals("SELF_TEST")));
+        
+        // Logic mới: CIVIL SELF_TEST → CONFIRMED, các loại khác → PENDING
+        if (request.getType().equals("CIVIL") && request.getMethod().equals("SELF_TEST")) {
+            ticket.setStatus(TicketStatus.CONFIRMED);
+            System.out.println("   ✅ CIVIL SELF_TEST detected, setting status: CONFIRMED");
+        } else {
+            ticket.setStatus(TicketStatus.PENDING);
+            System.out.println("   ✅ Other ticket type, setting status: PENDING");
+        }
 
         // Fetch customer
         User customer = userRepository.findById(request.getCustomerId())
@@ -70,6 +89,8 @@ public class TicketService {
         }
 
         Ticket savedTicket = ticketRepository.save(ticket);
+        System.out.println("   🎯 Final ticket status: " + savedTicket.getStatus());
+        System.out.println("   🎯 Final ticket ID: " + savedTicket.getId());
         return savedTicket;
     }
 
@@ -360,6 +381,86 @@ public class TicketService {
         ticket.setFeedbackDate(LocalDateTime.now());
 
         return ticketRepository.save(ticket);
+    }
+
+    /**
+     * Customer confirms they have received the DNA testing kit
+     */
+    @Transactional
+    public Ticket confirmKitReceived(Long ticketId, Long userId) {
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new RuntimeException("Ticket not found"));
+
+        // Check if user is the ticket owner
+        if (!ticket.getCustomer().getId().equals(userId)) {
+            throw new RuntimeException("Chỉ chủ ticket mới có thể thực hiện");
+        }
+
+        // Check if this is a CIVIL SELF_TEST ticket
+        if (ticket.getType() != TicketType.CIVIL || ticket.getMethod() != TestMethod.SELF_TEST) {
+            throw new RuntimeException("Chỉ áp dụng cho ticket Dân sự + Tự gửi mẫu");
+        }
+
+        // Check if ticket is in CONFIRMED status
+        if (ticket.getStatus() != TicketStatus.CONFIRMED) {
+            throw new RuntimeException("Ticket phải ở trạng thái CONFIRMED");
+        }
+
+        // Update status to RECEIVED
+        ticket.setStatus(TicketStatus.RECEIVED);
+        ticket.setUpdatedAt(LocalDateTime.now());
+
+        Ticket savedTicket = ticketRepository.save(ticket);
+
+        // Create notification for staff
+        if (ticket.getStaff() != null) {
+            notificationService.createNotification(
+                ticket.getStaff(),
+                "Khách hàng đã xác nhận nhận kit cho ticket #" + ticketId
+            );
+        }
+
+        return savedTicket;
+    }
+
+    /**
+     * Customer confirms they have sent the DNA testing kit back
+     */
+    @Transactional
+    public Ticket confirmKitSent(Long ticketId, Long userId) {
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new RuntimeException("Ticket not found"));
+
+        // Check if user is the ticket owner
+        if (!ticket.getCustomer().getId().equals(userId)) {
+            throw new RuntimeException("Chỉ chủ ticket mới có thể thực hiện");
+        }
+
+        // Check if this is a CIVIL SELF_TEST ticket
+        if (ticket.getType() != TicketType.CIVIL || ticket.getMethod() != TestMethod.SELF_TEST) {
+            throw new RuntimeException("Chỉ áp dụng cho ticket Dân sự + Tự gửi mẫu");
+        }
+
+        // Check if ticket is in RECEIVED status
+        if (ticket.getStatus() != TicketStatus.RECEIVED) {
+            throw new RuntimeException("Ticket phải ở trạng thái RECEIVED");
+        }
+
+        // Update status to PENDING (kit sent back, waiting for staff to process)
+        ticket.setStatus(TicketStatus.PENDING);
+        ticket.setUpdatedAt(LocalDateTime.now());
+
+        Ticket savedTicket = ticketRepository.save(ticket);
+
+        // Create notification for staff
+        if (ticket.getStaff() != null) {
+            notificationService.createNotification(
+                ticket.getStaff(),
+                "Khách hàng đã gửi kit về cho ticket #" + ticketId
+            );
+        }
+
+        return savedTicket;
     }
 }
 

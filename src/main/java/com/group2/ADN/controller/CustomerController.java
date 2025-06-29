@@ -77,4 +77,62 @@ public class CustomerController {
         }
     }
 
+    @PutMapping("/tickets/{ticketId}/confirm-received")
+    public ResponseEntity<?> confirmKitReceived(
+            @PathVariable Long ticketId,
+            Authentication authentication) {
+        try {
+            log.info("Confirm kit received for ticket: {}, user: {}", ticketId, authentication.getName());
+            
+            String email = authentication.getName();
+            User user = ticketService.findUserByEmail(email);
+            
+            Ticket updatedTicket = ticketService.confirmKitReceived(ticketId, user.getId());
+            
+            log.info("Kit received confirmation successful for ticket: {}", ticketId);
+            
+            return ResponseEntity.ok(Map.of(
+                "message", "Đã xác nhận nhận kit thành công",
+                "ticketId", updatedTicket.getId(),
+                "status", updatedTicket.getStatus(),
+                "updatedAt", updatedTicket.getUpdatedAt()
+            ));
+        } catch (RuntimeException e) {
+            log.error("Error confirming kit received for ticket {}: {}", ticketId, e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of(
+                "error", "Bad Request",
+                "message", e.getMessage()
+            ));
+        }
+    }
+
+    @PutMapping("/tickets/{ticketId}/confirm-sent")
+    public ResponseEntity<?> confirmKitSent(
+            @PathVariable Long ticketId,
+            Authentication authentication) {
+        try {
+            log.info("Confirm kit sent for ticket: {}, user: {}", ticketId, authentication.getName());
+            
+            String email = authentication.getName();
+            User user = ticketService.findUserByEmail(email);
+            
+            Ticket updatedTicket = ticketService.confirmKitSent(ticketId, user.getId());
+            
+            log.info("Kit sent confirmation successful for ticket: {}", ticketId);
+            
+            return ResponseEntity.ok(Map.of(
+                "message", "Đã xác nhận gửi kit thành công",
+                "ticketId", updatedTicket.getId(),
+                "status", updatedTicket.getStatus(),
+                "updatedAt", updatedTicket.getUpdatedAt()
+            ));
+        } catch (RuntimeException e) {
+            log.error("Error confirming kit sent for ticket {}: {}", ticketId, e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of(
+                "error", "Bad Request",
+                "message", e.getMessage()
+            ));
+        }
+    }
+
 }
