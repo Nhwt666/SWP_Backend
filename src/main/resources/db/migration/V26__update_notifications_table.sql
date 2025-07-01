@@ -1,7 +1,7 @@
 -- Drop existing table and recreate with new structure
-DROP TABLE IF EXISTS notification;
+DROP TABLE IF EXISTS notifications;
 
-CREATE TABLE notification (
+CREATE TABLE notifications (
     id BIGINT IDENTITY(1,1) PRIMARY KEY,
     message NVARCHAR(500) NOT NULL,
     type NVARCHAR(20) NOT NULL,
@@ -15,7 +15,7 @@ CREATE TABLE notification (
 );
 
 -- Create indexes for better performance
-CREATE INDEX idx_notification_user_id ON notification(user_id);
-CREATE INDEX idx_notification_ticket_id ON notification(ticket_id);
-CREATE INDEX idx_notification_expires_at ON notification(expires_at);
-CREATE INDEX idx_notification_created_at ON notification(created_at); 
+CREATE INDEX idx_notification_user_id ON notifications(user_id);
+CREATE INDEX idx_notification_ticket_id ON notifications(ticket_id);
+CREATE INDEX idx_notification_expires_at ON notifications(expires_at);
+CREATE INDEX idx_notification_created_at ON notifications(created_at); 

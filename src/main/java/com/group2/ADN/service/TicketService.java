@@ -181,7 +181,17 @@ public class TicketService {
         if (ticket.getCompletedAt() == null) {
             ticket.setCompletedAt(java.time.LocalDateTime.now());
         }
-        return ticketRepository.save(ticket);
+        Ticket savedTicket = ticketRepository.save(ticket);
+
+        // Create notification for customer when test is completed
+        notificationService.createNotification(
+            ticket.getCustomer(),
+            "Kết quả xét nghiệm cho ticket #" + ticketId + " đã hoàn thành.",
+            ticketId,
+            "INFO"
+        );
+
+        return savedTicket;
     }
 
     public User findUserById(Long id) {

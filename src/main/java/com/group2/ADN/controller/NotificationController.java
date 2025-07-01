@@ -94,7 +94,7 @@ public class NotificationController {
         String email = authentication.getName();
         User user = userRepository.findByEmail(email).orElseThrow();
         long count = notificationService.getUnreadCount(user.getId());
-        return ResponseEntity.ok(Map.of("unreadCount", count));
+        return ResponseEntity.ok(Map.of("count", count)); // Đổi "unreadCount" thành "count"
     }
 
     // Cron job chạy mỗi giờ để xóa notification hết hạn
