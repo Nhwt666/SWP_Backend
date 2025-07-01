@@ -23,6 +23,13 @@ import org.springframework.http.HttpStatus;
 import com.group2.ADN.dto.AdminRejectTicketRequest;
 import com.group2.ADN.service.ReviewService;
 import com.group2.ADN.dto.ReviewDTO;
+import com.group2.ADN.entity.TopUpHistory;
+import com.group2.ADN.repository.TopUpHistoryRepository;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.beans.factory.annotation.Autowired;
+import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.Map;
@@ -40,6 +47,7 @@ public class AdminController {
     private final TicketService ticketService;
     private final UserService userService;
     private final ReviewService reviewService;
+    private final TopUpHistoryRepository topUpHistoryRepository;
 
     // ✅ Kiểm tra phân quyền admin
     @GetMapping("/Test_Phan_Quyen")
@@ -321,6 +329,44 @@ public class AdminController {
             })
             .collect(java.util.stream.Collectors.toList());
         
+        return ResponseEntity.ok(result);
+    }
+
+    // DTO cho lịch sử nạp tiền
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    class TopUpHistoryAdminDTO {
+        private Long id;
+        private String userName;
+        private String userEmail;
+        private String paymentMethod;
+        private String payerId;
+        private java.math.BigDecimal amount;
+        private java.time.LocalDateTime createdAt;
+        private String status;
+    }
+
+    // API: Lấy toàn bộ lịch sử nạp tiền (PayPal + Momo) cho admin, trả về thông tin user và phương thức đẹp
+    @GetMapping("/topup-history")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<TopUpHistoryAdminDTO>> getAllTopUpHistory() {
+        List<TopUpHistory> historyList = topUpHistoryRepository.findAll();
+        List<TopUpHistoryAdminDTO> result = historyList.stream().map(h -> {
+            User user = userRepository.findById(h.getUserId()).orElse(null);
+            String userName = user != null ? user.getFullName() : "Ẩn";
+            String userEmail = user != null ? user.getEmail() : "Ẩn";
+            return new TopUpHistoryAdminDTO(
+                h.getId(),
+                userName,
+                userEmail,
+                h.getPaymentMethod(),
+                h.getPayerId(),
+                h.getAmount(),
+                h.getCreatedAt(),
+                h.getStatus()
+            );
+        }).toList();
         return ResponseEntity.ok(result);
     }
 }
