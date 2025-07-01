@@ -21,10 +21,14 @@ import com.group2.ADN.entity.TicketFeedback;
 import com.group2.ADN.repository.TicketFeedbackRepository;
 import com.group2.ADN.dto.TicketFeedbackRequest;
 import com.group2.ADN.service.NotificationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 @Transactional
 public class TicketService {
+
+    private static final Logger log = LoggerFactory.getLogger(TicketService.class);
 
     @Autowired
     private TicketRepository ticketRepository;
@@ -146,12 +150,26 @@ public class TicketService {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new RuntimeException("Ticket not found"));
 
+        TicketStatus oldStatus = ticket.getStatus();
+        log.info("Đổi trạng thái ticket #{} từ {} sang {}", ticketId, oldStatus, newStatus); // Log trước khi đổi trạng thái
         // Nếu chuyển sang COMPLETED thì set completedAt
         if (newStatus == TicketStatus.COMPLETED && ticket.getCompletedAt() == null) {
             ticket.setCompletedAt(java.time.LocalDateTime.now());
         }
         ticket.setStatus(newStatus);
-        return ticketRepository.save(ticket);
+        Ticket savedTicket = ticketRepository.save(ticket);
+
+        // Tạo notification cho customer khi chuyển trạng thái quan trọng
+        if (oldStatus != newStatus) {
+            notificationService.createStatusChangeNotification(
+                ticket.getCustomer(), 
+                ticket.getId(), 
+                oldStatus.name(), 
+                newStatus.name()
+            );
+        }
+        log.info("Đã đổi trạng thái ticket #{} thành {} thành công", ticketId, newStatus); // Log sau khi đổi trạng thái
+        return savedTicket;
     }
 
     public Ticket completeTicket(Long ticketId, String result) {

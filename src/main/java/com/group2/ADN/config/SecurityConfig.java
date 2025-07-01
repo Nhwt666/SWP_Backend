@@ -45,6 +45,10 @@
                             .requestMatchers(HttpMethod.GET, "/tickets/**").hasAnyRole("CUSTOMER", "STAFF", "ADMIN")
                             .requestMatchers(HttpMethod.POST, "/tickets/**").hasAnyRole("CUSTOMER", "STAFF", "ADMIN")
 
+                            .requestMatchers(HttpMethod.POST, "/notifications/**").hasAnyRole("STAFF", "ADMIN")
+                            .requestMatchers(HttpMethod.PUT, "/notifications/**").hasAnyRole("CUSTOMER", "STAFF", "ADMIN")
+                            .requestMatchers(HttpMethod.DELETE, "/notifications/**").hasAnyRole("STAFF", "ADMIN")
+
                             .anyRequest().authenticated()
                     )
                     .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

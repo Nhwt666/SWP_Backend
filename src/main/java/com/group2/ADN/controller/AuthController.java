@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.stream.Collectors;
-
+import lombok.extern.slf4j.Slf4j;
 import com.group2.ADN.dto.LoginRequest;
 import com.group2.ADN.dto.PendingRegisterRequest;
 import com.group2.ADN.dto.RegisterRequest;
@@ -25,6 +25,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.server.ResponseStatusException;
 
+@Slf4j
 @SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequestMapping("/auth")
@@ -100,6 +101,9 @@ public class AuthController {
         // 🔍 Tìm lại user đã lưu vào DB sau xác nhận
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy người dùng"));
+
+        // 👉 Log giá trị fullName
+        log.info("User đăng ký mới: email={}, fullName={}", user.getEmail(), user.getFullName());
 
         // 🔑 Tạo token ngay sau khi đăng ký xong
         String token = authService.generateToken(user);
