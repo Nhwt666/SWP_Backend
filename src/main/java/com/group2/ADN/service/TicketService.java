@@ -23,6 +23,7 @@ import com.group2.ADN.dto.TicketFeedbackRequest;
 import com.group2.ADN.service.NotificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.group2.ADN.service.MailService;
 
 @Service
 @Transactional
@@ -44,6 +45,9 @@ public class TicketService {
 
     @Autowired
     private NotificationService notificationService;
+
+    @Autowired
+    private MailService mailService;
 
     public Ticket createTicketFromRequest(TicketRequest request) {
         Ticket ticket = new Ticket();
@@ -190,6 +194,13 @@ public class TicketService {
             ticketId,
             "INFO"
         );
+
+        // Send email to customer to notify result is ready
+        String customerEmail = ticket.getCustomer().getEmail();
+        String subject = "Kết quả xét nghiệm ADN đã sẵn sàng";
+        String text = "Kính gửi Quý khách,\n\nKết quả xét nghiệm cho ticket #" + ticket.getId() +
+                      " đã hoàn thành. Vui lòng đăng nhập vào website để tải file PDF kết quả.\n\nTrân trọng,\nTrung tâm xét nghiệm ADN";
+        mailService.sendResultNotification(customerEmail, subject, text);
 
         return savedTicket;
     }

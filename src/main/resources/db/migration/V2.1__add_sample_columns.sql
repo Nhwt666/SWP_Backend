@@ -1,3 +1,0 @@
--- This migration is intentionally left empty.
--- Columns sample1_name and sample2_name were added in a previous, failed migration.
--- This file serves as a new baseline for subsequent migrations. 

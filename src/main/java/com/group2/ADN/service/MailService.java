@@ -18,7 +18,8 @@ public class MailService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
         message.setSubject("Mã Xác Thực");
-        message.setText("Kính gửi Quý khách,\n\nMã OTP của bạn là: " + otp + ". Vui lòng không chia sẻ mã này với bất kỳ ai để đảm bảo an toàn tài khoản.\n\nTrân trọng,\nĐội ngũ Hỗ trợ");        mailSender.send(message);
+        message.setText("Kính gửi Quý khách,\n\nMã OTP của bạn là: " + otp + ". Vui lòng không chia sẻ mã này với bất kỳ ai để đảm bảo an toàn tài khoản.\n\nTrân trọng,\nĐội ngũ Hỗ trợ");
+        mailSender.send(message);
     }
 
     // Gửi mail kèm file PDF kết quả
@@ -34,5 +35,13 @@ public class MailService {
         } catch (Exception e) {
             throw new RuntimeException("Gửi mail thất bại", e);
         }
+    }
+
+    public void sendResultNotification(String to, String subject, String text) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(text);
+        mailSender.send(message);
     }
 }
