@@ -30,4 +30,6 @@ public class TicketRequest {
 
     private String sample1Name;
     private String sample2Name;
+
+    private String voucherCode;
 }

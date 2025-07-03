@@ -85,6 +85,16 @@ public class Ticket {
     @Column(name = "feedback_date")
     private LocalDateTime feedbackDate;
 
+    @ManyToOne
+    @JoinColumn(name = "voucher_id")
+    private Voucher voucher;
+
+    @Column(name = "discount_amount")
+    private java.math.BigDecimal discountAmount;
+
+    @Column(name = "final_amount")
+    private java.math.BigDecimal finalAmount;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();

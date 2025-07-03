@@ -16,7 +16,7 @@ public class PendingRegister {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    @Column(name = "full_name", columnDefinition = "NVARCHAR(100)")
     private String fullName;
     private String email;
     private String phone;

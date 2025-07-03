@@ -23,6 +23,7 @@ import com.group2.ADN.dto.TicketFeedbackRequest;
 import com.group2.ADN.service.NotificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.group2.ADN.service.VoucherService;
 
 @Service
 @Transactional
@@ -44,6 +45,9 @@ public class TicketService {
 
     @Autowired
     private NotificationService notificationService;
+
+    @Autowired
+    private VoucherService voucherService;
 
     public Ticket createTicketFromRequest(TicketRequest request) {
         Ticket ticket = new Ticket();
@@ -90,6 +94,28 @@ public class TicketService {
             ticket.setAppointmentDate(request.getAppointmentDate());
         } else {
             ticket.setAppointmentDate(null);
+        }
+
+        // Xử lý voucher nếu có
+        if (request.getVoucherCode() != null && !request.getVoucherCode().isEmpty()) {
+            List<Voucher> vouchers = voucherService.getAllVouchers();
+            Voucher matched = vouchers.stream()
+                .filter(v -> v.getName().equalsIgnoreCase(request.getVoucherCode()))
+                .findFirst().orElse(null);
+            if (matched != null && voucherService.isVoucherValid(matched, LocalDateTime.now())) {
+                // Tính giảm giá
+                java.math.BigDecimal discount = java.math.BigDecimal.ZERO;
+                if ("percent".equalsIgnoreCase(matched.getType())) {
+                    discount = ticket.getAmount().multiply(matched.getValue()).divide(new java.math.BigDecimal(100));
+                } else if ("amount".equalsIgnoreCase(matched.getType())) {
+                    discount = matched.getValue();
+                }
+                if (discount.compareTo(ticket.getAmount()) > 0) discount = ticket.getAmount();
+                ticket.setVoucher(matched);
+                ticket.setDiscountAmount(discount);
+                ticket.setFinalAmount(ticket.getAmount().subtract(discount));
+                voucherService.incrementUsedCount(matched);
+            }
         }
 
         Ticket savedTicket = ticketRepository.save(ticket);

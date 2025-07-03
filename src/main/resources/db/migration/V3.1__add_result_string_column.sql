@@ -1,3 +1,0 @@
--- This migration is intentionally left empty.
--- Column result_string was added in a previous, failed migration.
--- This file serves as a new baseline for subsequent migrations. 

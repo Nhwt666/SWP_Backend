@@ -45,7 +45,9 @@ public class TicketController {
                 "ticketId", ticketCreated.getId(),
                 "status", ticketCreated.getStatus(),
                 "type", ticketCreated.getType(),
-                "method", ticketCreated.getMethod()
+                "method", ticketCreated.getMethod(),
+                "discountAmount", ticketCreated.getDiscountAmount(),
+                "finalAmount", ticketCreated.getFinalAmount()
             ));
         } catch (Exception e) {
             System.err.println("❌ ERROR in createTicket: " + e.getMessage());
@@ -213,7 +215,8 @@ public class TicketController {
                 "status", saved.getStatus(),
                 "type", saved.getType(),
                 "method", saved.getMethod(),
-                "amount", saved.getAmount()
+                "discountAmount", saved.getDiscountAmount(),
+                "finalAmount", saved.getFinalAmount()
             ));
             
         } catch (Exception e) {

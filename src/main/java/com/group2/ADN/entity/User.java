@@ -19,7 +19,7 @@ public class User {
     @Column(name = "user_id")
     private Long id;
 
-    @Column(name = "full_name", nullable = false)
+    @Column(name = "full_name", nullable = false, columnDefinition = "NVARCHAR(100)")
     private String fullName;
 
     @Column(nullable = false, unique = true)
@@ -41,5 +41,9 @@ public class User {
 
     @Column(length = 255)
     private String address;
+    
+    public void setPassword(String password) {
+        this.passwordHash = password;
+    }
 
 }
