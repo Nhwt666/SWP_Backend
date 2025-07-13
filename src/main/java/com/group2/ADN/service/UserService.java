@@ -16,7 +16,9 @@ import com.group2.ADN.entity.TicketStatus;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class UserService {
 
@@ -25,53 +27,44 @@ public class UserService {
     @Autowired
     private TicketRepository ticketRepository;
 
-    @Transactional
-    public void topUpWallet(Long userId, BigDecimal amount, String paymentMethod) {
-        System.out.println("🔁 Top-up requested: userId = " + userId + ", amount = " + amount);
+ 
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        BigDecimal currentBalance = user.getWalletBalance();
-        if (currentBalance == null) {
-            currentBalance = BigDecimal.ZERO;
-        }
-        user.setWalletBalance(currentBalance.add(amount));
-        userRepository.save(user);
-
-        System.out.println("✅ Wallet new balance: " + user.getWalletBalance());
-    }
-
+    /**
+     * Cập nhật thông tin profile của user dựa trên email
+     */
     public void updateProfile(String email, UpdateProfileRequest request) {
-        System.out.println("==== Update Profile Called ====");
-        System.out.println("Email: " + email);
-        System.out.println("Request data: " + request);
+        log.info("==== Update Profile Called ====");
+        log.info("Email: {}", email);
+        log.info("Request data: {}", request);
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> {
-                    System.out.println("❌ User not found for email: " + email);
+                    log.error("❌ User not found for email: {}", email);
                     return new RuntimeException("User not found");
                 });
 
         if (request.getFullName() != null) {
-            System.out.println("Updating full name to: " + request.getFullName());
+            log.info("Updating full name to: {}", request.getFullName());
             user.setFullName(request.getFullName());
         }
 
         if (request.getPhone() != null) {
-            System.out.println("Updating phone to: " + request.getPhone());
+            log.info("Updating phone to: {}", request.getPhone());
             user.setPhone(request.getPhone());
         }
 
         if (request.getAddress() != null) {
-            System.out.println("Updating address to: " + request.getAddress());
+            log.info("Updating address to: {}", request.getAddress());
             user.setAddress(request.getAddress());
         }
 
         userRepository.save(user);
-        System.out.println("✅ Cập Nhật Thông Tin Thành Công");
+        log.info("✅ Cập Nhật Thông Tin Thành Công");
     }
 
+    /**
+     * Admin cập nhật thông tin user
+     */
     @Transactional
     public User updateUserByAdmin(Long userId, AdminUpdateUserRequest request) {
         User user = userRepository.findById(userId)
@@ -96,6 +89,9 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    /**
+     * Tìm danh sách user kèm thống kê số lượng ticket (dùng cho dashboard)
+     */
     public List<UserWithTicketStatsDto> findUsersWithFiltersAndStats(String roleStr, String keyword) {
         // First, get the filtered list of users
         List<User> users = findUsersWithFilters(roleStr, keyword);
@@ -113,6 +109,9 @@ public class UserService {
         }).collect(Collectors.toList());
     }
 
+    /**
+     * Tìm danh sách user theo filter role và keyword
+     */
     public List<User> findUsersWithFilters(String roleStr, String keyword) {
         Specification<User> spec = (root, query, criteriaBuilder) -> {
             // Predicate list
@@ -140,5 +139,26 @@ public class UserService {
         };
 
         return userRepository.findAll(spec);
+    }
+
+
+    /**
+     * Nạp tiền vào ví của user
+     */
+    @Transactional
+    public void topUpWallet(Long userId, BigDecimal amount, String paymentMethod) {
+        log.info("🔁 Top-up requested: userId = {}, amount = {}", userId, amount);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        BigDecimal currentBalance = user.getWalletBalance();
+        if (currentBalance == null) {
+            currentBalance = BigDecimal.ZERO;
+        }
+        user.setWalletBalance(currentBalance.add(amount));
+        userRepository.save(user);
+
+        log.info(" Wallet new balance: {}", user.getWalletBalance());
     }
 }
