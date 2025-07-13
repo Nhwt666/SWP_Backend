@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Arrays;
 import java.util.stream.Collectors;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/tickets")
@@ -45,7 +46,9 @@ public class TicketController {
                 "ticketId", ticketCreated.getId(),
                 "status", ticketCreated.getStatus(),
                 "type", ticketCreated.getType(),
-                "method", ticketCreated.getMethod()
+                "method", ticketCreated.getMethod(),
+                "discountAmount", ticketCreated.getDiscountAmount(),
+                "finalAmount", ticketCreated.getFinalAmount()
             ));
         } catch (Exception e) {
             System.err.println("❌ ERROR in createTicket: " + e.getMessage());
@@ -207,23 +210,25 @@ public class TicketController {
             System.out.println("   🎯 Final ticket ID: " + saved.getId());
             System.out.println("🔍 DEBUG: createTicketAfterPayment - END");
             
-            return ResponseEntity.ok(Map.of(
-                "message", "Ticket created successfully",
-                "ticketId", saved.getId(),
-                "status", saved.getStatus(),
-                "type", saved.getType(),
-                "method", saved.getMethod(),
-                "amount", saved.getAmount()
-            ));
-            
+            Map<String, Object> response = new HashMap<>();
+response.put("message", "Ticket created successfully");
+response.put("ticketId", saved.getId());
+response.put("status", saved.getStatus());
+response.put("type", saved.getType());
+response.put("method", saved.getMethod());
+response.put("discountAmount", saved.getDiscountAmount() != null ? saved.getDiscountAmount() : BigDecimal.ZERO);
+response.put("finalAmount", saved.getFinalAmount() != null ? saved.getFinalAmount() : BigDecimal.ZERO);
+return ResponseEntity.ok(response);
+
         } catch (Exception e) {
             System.err.println("❌ ERROR in createTicketAfterPayment: " + e.getMessage());
             System.err.println("❌ Stack trace:");
             e.printStackTrace();
+            String safeMessage = (e.getMessage() != null) ? e.getMessage() : "No detail message";
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
                 "error", "Internal server error",
                 "message", "An unexpected error occurred while creating the ticket",
-                "details", e.getMessage()
+                "details", safeMessage
             ));
         }
     }
