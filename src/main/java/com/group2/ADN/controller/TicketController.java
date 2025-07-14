@@ -4,22 +4,19 @@ import com.group2.ADN.dto.TicketRequest;
 import com.group2.ADN.entity.Ticket;
 import com.group2.ADN.entity.TicketStatus;
 import com.group2.ADN.entity.User;
+import com.group2.ADN.entity.TicketType;
+import com.group2.ADN.entity.TestMethod;
 import com.group2.ADN.service.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
-import com.group2.ADN.entity.TicketType;
-import com.group2.ADN.entity.TestMethod;
-import com.group2.ADN.dto.TicketFeedbackRequest;
-import org.springframework.http.HttpStatus;
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Arrays;
 import java.util.stream.Collectors;
-import java.util.HashMap;
 
 @RestController
 @RequestMapping("/tickets")
@@ -46,9 +43,7 @@ public class TicketController {
                 "ticketId", ticketCreated.getId(),
                 "status", ticketCreated.getStatus(),
                 "type", ticketCreated.getType(),
-                "method", ticketCreated.getMethod(),
-                "discountAmount", ticketCreated.getDiscountAmount(),
-                "finalAmount", ticketCreated.getFinalAmount()
+                "method", ticketCreated.getMethod()
             ));
         } catch (Exception e) {
             System.err.println("❌ ERROR in createTicket: " + e.getMessage());
@@ -96,6 +91,9 @@ public class TicketController {
         return ResponseEntity.ok(ticketService.getTicketsByStatus(status));
     }
 
+    /**
+     * Tạo ticket sau khi thanh toán thành công
+     */
     @PostMapping("/after-payment")
     public ResponseEntity<?> createTicketAfterPayment(@RequestBody TicketRequest request, Authentication authentication) {
         try {
@@ -210,29 +208,30 @@ public class TicketController {
             System.out.println("   🎯 Final ticket ID: " + saved.getId());
             System.out.println("🔍 DEBUG: createTicketAfterPayment - END");
             
-            Map<String, Object> response = new HashMap<>();
-response.put("message", "Ticket created successfully");
-response.put("ticketId", saved.getId());
-response.put("status", saved.getStatus());
-response.put("type", saved.getType());
-response.put("method", saved.getMethod());
-response.put("discountAmount", saved.getDiscountAmount() != null ? saved.getDiscountAmount() : BigDecimal.ZERO);
-response.put("finalAmount", saved.getFinalAmount() != null ? saved.getFinalAmount() : BigDecimal.ZERO);
-return ResponseEntity.ok(response);
-
+            return ResponseEntity.ok(Map.of(
+                "message", "Ticket created successfully",
+                "ticketId", saved.getId(),
+                "status", saved.getStatus(),
+                "type", saved.getType(),
+                "method", saved.getMethod(),
+                "amount", saved.getAmount()
+            ));
+            
         } catch (Exception e) {
             System.err.println("❌ ERROR in createTicketAfterPayment: " + e.getMessage());
             System.err.println("❌ Stack trace:");
             e.printStackTrace();
-            String safeMessage = (e.getMessage() != null) ? e.getMessage() : "No detail message";
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
                 "error", "Internal server error",
                 "message", "An unexpected error occurred while creating the ticket",
-                "details", safeMessage
+                "details", e.getMessage()
             ));
         }
     }
 
+    /**
+     * Lấy lịch sử ticket của user hiện tại
+     */
     @GetMapping("/history")
     public ResponseEntity<List<Ticket>> getHistory(Authentication authentication) {
         String email = authentication.getName();
@@ -240,6 +239,9 @@ return ResponseEntity.ok(response);
         return ResponseEntity.ok(ticketService.getTicketsByCustomer(user));
     }
 
+    /**
+     * Lấy danh sách ticket được gán cho staff hiện tại
+     */
     @GetMapping("/assigned")
     public ResponseEntity<List<Ticket>> getAssigned(Authentication authentication) {
         String email = authentication.getName();
@@ -247,11 +249,17 @@ return ResponseEntity.ok(response);
         return ResponseEntity.ok(ticketService.getTicketsByStaff(staff));
     }
 
+    /**
+     * Lấy danh sách ticket chưa được gán staff
+     */
     @GetMapping("/unassigned")
     public ResponseEntity<List<Ticket>> getUnassignedTickets() {
         return ResponseEntity.ok(ticketService.getUnassignedPendingTickets());
     }
 
+    /**
+     * Lấy danh sách các giá trị enum cho ticket (status, type, method)
+     */
     @GetMapping("/debug/enums")
     public ResponseEntity<?> getEnums() {
         return ResponseEntity.ok(Map.of(

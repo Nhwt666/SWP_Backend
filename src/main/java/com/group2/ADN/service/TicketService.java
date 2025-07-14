@@ -10,20 +10,17 @@ import com.group2.ADN.repository.ResultRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.util.List;
 import java.util.Optional;
 import java.time.LocalDateTime;
 import com.group2.ADN.dto.AdminUpdateTicketRequest;
 import com.group2.ADN.dto.AdminCreateTicketRequest;
-import com.group2.ADN.entity.TicketFeedback;
 import com.group2.ADN.repository.TicketFeedbackRepository;
-import com.group2.ADN.dto.TicketFeedbackRequest;
 import com.group2.ADN.service.NotificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.group2.ADN.service.MailService;
+
+import com.group2.ADN.dto.TicketFeedbackRequest;
 
 @Service
 @Transactional
@@ -49,6 +46,9 @@ public class TicketService {
     @Autowired
     private MailService mailService;
 
+    /**
+     * Tạo ticket mới từ request của customer
+     */
     public Ticket createTicketFromRequest(TicketRequest request) {
         Ticket ticket = new Ticket();
 
@@ -61,20 +61,11 @@ public class TicketService {
 
         ticket.setReason(request.getReason());
         
-        // Debug logs để kiểm tra status
-        System.out.println("🔍 DEBUG: createTicketFromRequest");
-        System.out.println("   Request status: " + request.getStatus());
-        System.out.println("   Request type: " + request.getType());
-        System.out.println("   Request method: " + request.getMethod());
-        System.out.println("   Is CIVIL SELF_TEST: " + (request.getType().equals("CIVIL") && request.getMethod().equals("SELF_TEST")));
-        
         // Logic mới: CIVIL SELF_TEST → CONFIRMED, các loại khác → PENDING
         if (request.getType().equals("CIVIL") && request.getMethod().equals("SELF_TEST")) {
             ticket.setStatus(TicketStatus.CONFIRMED);
-            System.out.println("   ✅ CIVIL SELF_TEST detected, setting status: CONFIRMED");
         } else {
             ticket.setStatus(TicketStatus.PENDING);
-            System.out.println("   ✅ Other ticket type, setting status: PENDING");
         }
 
         // Fetch customer
@@ -97,8 +88,6 @@ public class TicketService {
         }
 
         Ticket savedTicket = ticketRepository.save(ticket);
-        System.out.println("   🎯 Final ticket status: " + savedTicket.getStatus());
-        System.out.println("   🎯 Final ticket ID: " + savedTicket.getId());
         return savedTicket;
     }
 
@@ -106,18 +95,30 @@ public class TicketService {
         return str == null || str.trim().isEmpty();
     }
 
+    /**
+     * Lấy ticket theo id
+     */
     public Optional<Ticket> getTicketById(Long id) {
         return ticketRepository.findById(id);
     }
 
+    /**
+     * Lấy danh sách ticket của customer
+     */
     public List<Ticket> getTicketsByCustomer(User customer) {
         return ticketRepository.findByCustomer(customer);
     }
 
+    /**
+     * Lấy danh sách ticket theo trạng thái
+     */
     public List<Ticket> getTicketsByStatus(TicketStatus status) {
         return ticketRepository.findByStatus(status);
     }
 
+    /**
+     * Tự động gán staff cho ticket (nếu staff chưa quá tải)
+     */
     public Ticket assignStaffAutomatically(Long ticketId) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new RuntimeException("Ticket not found"));
@@ -140,22 +141,22 @@ public class TicketService {
             if (activeCount < 5) {
                 ticket.setStaff(staff);
                 ticket.setStatus(TicketStatus.IN_PROGRESS);
-                System.out.println("✅ Assigned staff: " + staff.getFullName() + " to ticket ID: " + ticketId);
                 return ticketRepository.save(ticket);
             }
         }
 
         // All staff are at full capacity
-        System.out.println("❌ All staff are currently handling 5 or more tickets");
         return ticket; // Optionally return unassigned or throw exception
     }
 
+    /**
+     * Đổi trạng thái ticket
+     */
     public Ticket updateStatus(Long ticketId, TicketStatus newStatus) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new RuntimeException("Ticket not found"));
 
         TicketStatus oldStatus = ticket.getStatus();
-        log.info("Đổi trạng thái ticket #{} từ {} sang {}", ticketId, oldStatus, newStatus); // Log trước khi đổi trạng thái
         // Nếu chuyển sang COMPLETED thì set completedAt
         if (newStatus == TicketStatus.COMPLETED && ticket.getCompletedAt() == null) {
             ticket.setCompletedAt(java.time.LocalDateTime.now());
@@ -172,10 +173,12 @@ public class TicketService {
                 newStatus.name()
             );
         }
-        log.info("Đã đổi trạng thái ticket #{} thành {} thành công", ticketId, newStatus); // Log sau khi đổi trạng thái
         return savedTicket;
     }
 
+    /**
+     * Đánh dấu ticket đã hoàn thành và gửi thông báo cho customer
+     */
     public Ticket completeTicket(Long ticketId, String result) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new RuntimeException("Ticket not found"));
@@ -205,28 +208,46 @@ public class TicketService {
         return savedTicket;
     }
 
+    /**
+     * Tìm user theo id
+     */
     public User findUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
+    /**
+     * Tìm user theo email
+     */
     public User findUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
+    /**
+     * Lưu ticket
+     */
     public Ticket saveTicket(Ticket ticket) {
         return ticketRepository.save(ticket);
     }
 
+    /**
+     * Lưu user
+     */
     public User saveUser(User user) {
         return userRepository.save(user);
     }
 
+    /**
+     * Lấy danh sách ticket của staff
+     */
     public List<Ticket> getTicketsByStaff(User staff) {
         return ticketRepository.findByStaff(staff);
     }
 
+    /**
+     * Staff nhập kết quả xét nghiệm cho ticket
+     */
     public Ticket assignResultToTicket(AssignResultRequest request) {
         Ticket ticket = ticketRepository.findById(request.getTicketId())
                 .orElseThrow(() -> new RuntimeException("Ticket not found"));
@@ -246,6 +267,9 @@ public class TicketService {
         return ticketRepository.save(ticket);
     }
 
+    /**
+     * Staff hủy kết quả xét nghiệm của ticket
+     */
     public Ticket cancelResult(Long ticketId) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new RuntimeException("Ticket not found"));
