@@ -2,6 +2,8 @@ package com.group2.ADN.service;
 
 import com.group2.ADN.repository.PasswordResetRequestRepository;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +13,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class PasswordResetRequestCleanupService {
 
+    private static final Logger log = LoggerFactory.getLogger(PasswordResetRequestCleanupService.class);
     private final PasswordResetRequestRepository passwordResetRequestRepository;
 
     @Scheduled(fixedRate = 120000) // 2 phút
@@ -19,16 +22,16 @@ public class PasswordResetRequestCleanupService {
 
         if (!expiredList.isEmpty()) {
             expiredList.forEach(req ->
-                    System.out.println("⚠ OTP hết hạn: " + req.getOtp() + ", email: " + req.getEmail())
+                log.warn("[OTP] OTP hết hạn: {}, email: {}", req.getOtp(), req.getEmail())
             );
         }
 
         int deleted = passwordResetRequestRepository.deleteByExpiresAtBefore(LocalDateTime.now());
 
         if (deleted > 0) {
-            System.out.println("🧹 Đã xóa " + deleted + " bản ghi password_reset_requests hết hạn.");
+            log.info("[OTP] Đã xóa {} bản ghi password_reset_requests hết hạn.", deleted);
         } else {
-            System.out.println("✅ Không có OTP nào hết hạn cần xóa.");
+            log.info("[OTP] Không có OTP nào hết hạn cần xóa.");
         }
     }
 }

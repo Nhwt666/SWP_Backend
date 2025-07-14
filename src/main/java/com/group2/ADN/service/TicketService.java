@@ -525,5 +525,61 @@ public class TicketService {
 
         return savedTicket;
     }
+
+    /**
+     * Tạo ticket sau khi thanh toán thành công (logic chuyển từ controller)
+     */
+    public Ticket createTicketAfterPayment(TicketRequest request, User user) {
+        log.info("[TICKET] Creating ticket after payment for user: {}, amount: {}", user.getEmail(), request.getAmount());
+        // Validate amount
+        java.math.BigDecimal amount = request.getAmount();
+        if (amount == null) {
+            throw new RuntimeException("Amount is required");
+        }
+        java.math.BigDecimal min = new java.math.BigDecimal("100000");
+        java.math.BigDecimal max = new java.math.BigDecimal("10000000000");
+        if (amount.compareTo(min) < 0 || amount.compareTo(max) > 0) {
+            throw new RuntimeException("[TICKET] Amount must be between 100,000 and 10,000,000,000");
+        }
+        java.math.BigDecimal currentBalance = user.getWalletBalance();
+        if (currentBalance == null) currentBalance = java.math.BigDecimal.ZERO;
+        if (currentBalance.compareTo(amount) < 0) {
+            throw new RuntimeException("[TICKET] Wallet balance is not sufficient for this transaction");
+        }
+        // Trừ tiền
+        user.setWalletBalance(currentBalance.subtract(amount));
+        saveUser(user);
+        log.info("[TICKET] Deducted {} from user wallet. New balance: {}", amount, user.getWalletBalance());
+
+        Ticket ticket = new Ticket();
+        try {
+            ticket.setType(TicketType.valueOf(request.getType()));
+            ticket.setMethod(TestMethod.valueOf(request.getMethod()));
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("[TICKET] Invalid ticket type or method");
+        }
+        ticket.setReason(request.getReason());
+        // Logic mới: CIVIL SELF_TEST → CONFIRMED, các loại khác → PENDING
+        if (request.getType().equals("CIVIL") && request.getMethod().equals("SELF_TEST")) {
+            ticket.setStatus(TicketStatus.CONFIRMED);
+        } else {
+            ticket.setStatus(TicketStatus.PENDING);
+        }
+        ticket.setCustomer(user);
+        ticket.setAddress(request.getAddress());
+        ticket.setPhone(request.getPhone());
+        ticket.setEmail(request.getEmail());
+        ticket.setSample1Name(request.getSample1Name());
+        ticket.setSample2Name(request.getSample2Name());
+        ticket.setAmount(amount);
+        if (ticket.getMethod() == TestMethod.AT_FACILITY) {
+            ticket.setAppointmentDate(request.getAppointmentDate());
+        } else {
+            ticket.setAppointmentDate(null);
+        }
+        Ticket savedTicket = saveTicket(ticket);
+        log.info("[TICKET] Ticket created successfully. Ticket ID: {}, Status: {}", savedTicket.getId(), savedTicket.getStatus());
+        return savedTicket;
+    }
 }
 
