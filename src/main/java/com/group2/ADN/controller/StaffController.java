@@ -33,24 +33,10 @@ public class StaffController {
         );
     }
 
-    @PostMapping("/assign-result")
-    public ResponseEntity<Ticket> assignResultToTicket(@Valid @RequestBody AssignResultRequest request) {
-        Ticket updatedTicket = ticketService.assignResultToTicket(request);
-        return ResponseEntity.ok(updatedTicket);
+    @PutMapping("/{id}/complete")
+    public ResponseEntity<Ticket> completeTicket(@PathVariable Long id, @RequestBody String result) {
+        Ticket ticketUpdated = ticketService.completeTicket(id, result);
+        return ResponseEntity.ok(ticketUpdated);
     }
 
-    @PostMapping("/cancel-result")
-    public ResponseEntity<Ticket> cancelResult(@RequestParam Long ticketId) {
-        Ticket ticket = ticketService.cancelResult(ticketId);
-        if (ticket.getResult() != null) {
-            return ResponseEntity.badRequest().body(ticket);
-        }
-        return ResponseEntity.ok(ticket);
-    }
-
-    @PostMapping("/update-result")
-    public ResponseEntity<Ticket> updateResult(@Valid @RequestBody AssignResultRequest request) {
-        Ticket updatedTicket = ticketService.updateResultOfTicket(request);
-        return ResponseEntity.ok(updatedTicket);
-    }
 }

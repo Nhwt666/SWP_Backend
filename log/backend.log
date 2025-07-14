@@ -1955,3 +1955,227 @@ This generated password is for development use only. Your security configuration
 2025-07-14T01:46:18.212+07:00  WARN 20604 --- [ADN] [http-nio-8080-exec-7] .w.s.m.s.DefaultHandlerExceptionResolver : Resolved [org.springframework.web.HttpRequestMethodNotSupportedException: Request method 'POST' is not supported]
 2025-07-14T01:46:30.789+07:00  INFO 20604 --- [ADN] [http-nio-8080-exec-6] c.g.ADN.controller.CustomerController    : Feedback request for ticket: 1203, user: kenfileague1234@gmail.com
 2025-07-14T01:46:30.800+07:00  INFO 20604 --- [ADN] [http-nio-8080-exec-6] c.g.ADN.controller.CustomerController    : Feedback submitted successfully for ticket: 1203
+2025-07-14T15:22:54.848+07:00  INFO 13456 --- [ADN] [main] com.group2.ADN.AdnApplication            : Starting AdnApplication using Java 24.0.1 with PID 13456 (C:\Users\Phuong Nguyen\Desktop\hello\SWP_Backend\target\classes started by Phuong Nguyen in C:\Users\Phuong Nguyen\Desktop\hello\SWP_Backend)
+2025-07-14T15:22:54.849+07:00 DEBUG 13456 --- [ADN] [main] com.group2.ADN.AdnApplication            : Running with Spring Boot v3.5.0, Spring v6.2.7
+2025-07-14T15:22:54.850+07:00  INFO 13456 --- [ADN] [main] com.group2.ADN.AdnApplication            : No active profile set, falling back to 1 default profile: "default"
+2025-07-14T15:22:55.474+07:00  INFO 13456 --- [ADN] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-07-14T15:22:55.534+07:00  INFO 13456 --- [ADN] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 51 ms. Found 9 JPA repository interfaces.
+2025-07-14T15:22:55.906+07:00  INFO 13456 --- [ADN] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-07-14T15:22:55.915+07:00  INFO 13456 --- [ADN] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-07-14T15:22:55.916+07:00  INFO 13456 --- [ADN] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.41]
+2025-07-14T15:22:55.953+07:00  INFO 13456 --- [ADN] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-07-14T15:22:55.954+07:00  INFO 13456 --- [ADN] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1063 ms
+2025-07-14T15:22:55.987+07:00 DEBUG 13456 --- [ADN] [main] c.g.A.security.JwtAuthenticationFilter   : Filter 'jwtAuthenticationFilter' configured for use
+2025-07-14T15:22:56.173+07:00  INFO 13456 --- [ADN] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-07-14T15:22:56.423+07:00  INFO 13456 --- [ADN] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection ConnectionID:1 ClientConnectionId: af2dfcdf-5dbf-4307-b690-d03955246d34
+2025-07-14T15:22:56.424+07:00  INFO 13456 --- [ADN] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-07-14T15:22:56.455+07:00  INFO 13456 --- [ADN] [main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:sqlserver://localhost:1433;connectRetryInterval=10;connectRetryCount=1;maxResultBuffer=-1;sendTemporalDataTypesAsStringForBulkCopy=true;delayLoadingLobs=true;useFmtOnly=false;cacheBulkCopyMetadata=false;bulkCopyForBatchInsertAllowEncryptedValueModifications=false;bulkCopyForBatchInsertTableLock=false;bulkCopyForBatchInsertKeepNulls=false;bulkCopyForBatchInsertKeepIdentity=false;bulkCopyForBatchInsertFireTriggers=false;bulkCopyForBatchInsertCheckConstraints=false;bulkCopyForBatchInsertBatchSize=0;useBulkCopyForBatchInsert=false;cancelQueryTimeout=-1;sslProtocol=TLS;calcBigDecimalPrecision=false;useDefaultJaasConfig=false;jaasConfigurationName=SQLJDBCDriver;statementPoolingCacheSize=0;serverPreparedStatementDiscardThreshold=10;enablePrepareOnFirstPreparedStatementCall=false;fips=false;socketTimeout=0;authentication=NotSpecified;authenticationScheme=nativeAuthentication;xopenStates=false;datetimeParameterType=datetime2;sendTimeAsDatetime=true;replication=false;trustStoreType=JKS;trustServerCertificate=true;TransparentNetworkIPResolution=true;iPAddressPreference=IPv4First;serverNameAsACE=false;sendStringParametersAsUnicode=true;selectMethod=direct;responseBuffering=adaptive;queryTimeout=-1;packetSize=8000;multiSubnetFailover=false;loginTimeout=30;lockTimeout=-1;lastUpdateCount=true;useDefaultGSSCredential=false;prepareMethod=prepexec;encrypt=true;disableStatementPooling=true;databaseName=ADN_DB;columnEncryptionSetting=Disabled;applicationName=Microsoft JDBC Driver for SQL Server;applicationIntent=readwrite; (Microsoft SQL Server 16.0)
+2025-07-14T15:22:56.557+07:00  INFO 13456 --- [ADN] [main] o.f.core.internal.command.DbValidate     : Successfully validated 18 migrations (execution time 00:00.050s)
+2025-07-14T15:22:56.570+07:00  INFO 13456 --- [ADN] [main] o.f.core.internal.command.DbMigrate      : Current version of schema [dbo]: 27
+2025-07-14T15:22:56.576+07:00  INFO 13456 --- [ADN] [main] o.f.core.internal.command.DbMigrate      : Schema [dbo] is up to date. No migration necessary.
+2025-07-14T15:22:56.633+07:00  INFO 13456 --- [ADN] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-07-14T15:22:56.681+07:00  INFO 13456 --- [ADN] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.15.Final
+2025-07-14T15:22:56.709+07:00  INFO 13456 --- [ADN] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-07-14T15:22:56.917+07:00  INFO 13456 --- [ADN] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-07-14T15:22:56.950+07:00  WARN 13456 --- [ADN] [main] org.hibernate.orm.deprecation            : HHH90000025: SQLServer2012Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-07-14T15:22:56.951+07:00  WARN 13456 --- [ADN] [main] org.hibernate.orm.deprecation            : HHH90000026: SQLServer2012Dialect has been deprecated; use org.hibernate.dialect.SQLServerDialect instead
+2025-07-14T15:22:56.962+07:00  INFO 13456 --- [ADN] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 11.0
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-07-14T15:22:57.654+07:00  INFO 13456 --- [ADN] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-07-14T15:22:58.539+07:00  INFO 13456 --- [ADN] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-07-14T15:22:58.736+07:00  INFO 13456 --- [ADN] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-07-14T15:22:59.529+07:00  WARN 13456 --- [ADN] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-07-14T15:22:59.549+07:00  WARN 13456 --- [ADN] [main] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 27644928-e104-4bc4-b222-fdcea6334406
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-07-14T15:22:59.553+07:00  INFO 13456 --- [ADN] [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-07-14T15:22:59.981+07:00  INFO 13456 --- [ADN] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-07-14T15:22:59.989+07:00  INFO 13456 --- [ADN] [main] com.group2.ADN.AdnApplication            : Started AdnApplication in 5.517 seconds (process running for 6.111)
+2025-07-14T15:22:59.991+07:00  INFO 13456 --- [ADN] [scheduling-1] c.g.A.controller.NotificationController  : 🕐 Bắt đầu cleanup notification hết hạn...
+2025-07-14T15:23:00.079+07:00  INFO 13456 --- [ADN] [scheduling-1] g.A.s.PasswordResetRequestCleanupService : [OTP] Không có OTP nào hết hạn cần xóa.
+2025-07-14T15:23:39.963+07:00  INFO 13456 --- [ADN] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-07-14T15:23:39.966+07:00  INFO 13456 --- [ADN] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-07-14T15:23:39.971+07:00  INFO 13456 --- [ADN] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-07-14T15:23:39.972+07:00  INFO 13456 --- [ADN] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-07-14T15:23:39.975+07:00  INFO 13456 --- [ADN] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-07-14T15:26:30.189+07:00  INFO 17104 --- [ADN] [main] com.group2.ADN.AdnApplication            : Starting AdnApplication using Java 24.0.1 with PID 17104 (C:\Users\Phuong Nguyen\Desktop\hello\SWP_Backend\target\classes started by Phuong Nguyen in C:\Users\Phuong Nguyen\Desktop\hello\SWP_Backend)
+2025-07-14T15:26:30.190+07:00 DEBUG 17104 --- [ADN] [main] com.group2.ADN.AdnApplication            : Running with Spring Boot v3.5.0, Spring v6.2.7
+2025-07-14T15:26:30.191+07:00  INFO 17104 --- [ADN] [main] com.group2.ADN.AdnApplication            : No active profile set, falling back to 1 default profile: "default"
+2025-07-14T15:26:30.741+07:00  INFO 17104 --- [ADN] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-07-14T15:26:30.788+07:00  INFO 17104 --- [ADN] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 41 ms. Found 9 JPA repository interfaces.
+2025-07-14T15:26:31.130+07:00  INFO 17104 --- [ADN] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-07-14T15:26:31.138+07:00  INFO 17104 --- [ADN] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-07-14T15:26:31.138+07:00  INFO 17104 --- [ADN] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.41]
+2025-07-14T15:26:31.169+07:00  INFO 17104 --- [ADN] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-07-14T15:26:31.169+07:00  INFO 17104 --- [ADN] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 947 ms
+2025-07-14T15:26:31.194+07:00 DEBUG 17104 --- [ADN] [main] c.g.A.security.JwtAuthenticationFilter   : Filter 'jwtAuthenticationFilter' configured for use
+2025-07-14T15:26:31.351+07:00  INFO 17104 --- [ADN] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-07-14T15:26:31.543+07:00  INFO 17104 --- [ADN] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection ConnectionID:1 ClientConnectionId: 509d1a7e-71e8-473e-9a49-05e8134f7a9b
+2025-07-14T15:26:31.544+07:00  INFO 17104 --- [ADN] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-07-14T15:26:31.575+07:00  INFO 17104 --- [ADN] [main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:sqlserver://localhost:1433;connectRetryInterval=10;connectRetryCount=1;maxResultBuffer=-1;sendTemporalDataTypesAsStringForBulkCopy=true;delayLoadingLobs=true;useFmtOnly=false;cacheBulkCopyMetadata=false;bulkCopyForBatchInsertAllowEncryptedValueModifications=false;bulkCopyForBatchInsertTableLock=false;bulkCopyForBatchInsertKeepNulls=false;bulkCopyForBatchInsertKeepIdentity=false;bulkCopyForBatchInsertFireTriggers=false;bulkCopyForBatchInsertCheckConstraints=false;bulkCopyForBatchInsertBatchSize=0;useBulkCopyForBatchInsert=false;cancelQueryTimeout=-1;sslProtocol=TLS;calcBigDecimalPrecision=false;useDefaultJaasConfig=false;jaasConfigurationName=SQLJDBCDriver;statementPoolingCacheSize=0;serverPreparedStatementDiscardThreshold=10;enablePrepareOnFirstPreparedStatementCall=false;fips=false;socketTimeout=0;authentication=NotSpecified;authenticationScheme=nativeAuthentication;xopenStates=false;datetimeParameterType=datetime2;sendTimeAsDatetime=true;replication=false;trustStoreType=JKS;trustServerCertificate=true;TransparentNetworkIPResolution=true;iPAddressPreference=IPv4First;serverNameAsACE=false;sendStringParametersAsUnicode=true;selectMethod=direct;responseBuffering=adaptive;queryTimeout=-1;packetSize=8000;multiSubnetFailover=false;loginTimeout=30;lockTimeout=-1;lastUpdateCount=true;useDefaultGSSCredential=false;prepareMethod=prepexec;encrypt=true;disableStatementPooling=true;databaseName=ADN_DB;columnEncryptionSetting=Disabled;applicationName=Microsoft JDBC Driver for SQL Server;applicationIntent=readwrite; (Microsoft SQL Server 16.0)
+2025-07-14T15:26:31.619+07:00  INFO 17104 --- [ADN] [main] o.f.core.internal.command.DbValidate     : Successfully validated 18 migrations (execution time 00:00.023s)
+2025-07-14T15:26:31.628+07:00  INFO 17104 --- [ADN] [main] o.f.core.internal.command.DbMigrate      : Current version of schema [dbo]: 27
+2025-07-14T15:26:31.632+07:00  INFO 17104 --- [ADN] [main] o.f.core.internal.command.DbMigrate      : Schema [dbo] is up to date. No migration necessary.
+2025-07-14T15:26:31.675+07:00  INFO 17104 --- [ADN] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-07-14T15:26:31.698+07:00  INFO 17104 --- [ADN] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.15.Final
+2025-07-14T15:26:31.715+07:00  INFO 17104 --- [ADN] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-07-14T15:26:31.866+07:00  INFO 17104 --- [ADN] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-07-14T15:26:31.891+07:00  WARN 17104 --- [ADN] [main] org.hibernate.orm.deprecation            : HHH90000025: SQLServer2012Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-07-14T15:26:31.892+07:00  WARN 17104 --- [ADN] [main] org.hibernate.orm.deprecation            : HHH90000026: SQLServer2012Dialect has been deprecated; use org.hibernate.dialect.SQLServerDialect instead
+2025-07-14T15:26:31.901+07:00  INFO 17104 --- [ADN] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 11.0
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-07-14T15:26:32.473+07:00  INFO 17104 --- [ADN] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-07-14T15:26:32.619+07:00  INFO 17104 --- [ADN] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-07-14T15:26:32.790+07:00  INFO 17104 --- [ADN] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-07-14T15:26:33.479+07:00  WARN 17104 --- [ADN] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-07-14T15:26:33.494+07:00  WARN 17104 --- [ADN] [main] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 0491cd58-e232-40ef-9cf2-4068b685e90c
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-07-14T15:26:33.498+07:00  INFO 17104 --- [ADN] [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-07-14T15:26:33.858+07:00  INFO 17104 --- [ADN] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-07-14T15:26:33.865+07:00  INFO 17104 --- [ADN] [main] com.group2.ADN.AdnApplication            : Started AdnApplication in 3.983 seconds (process running for 4.378)
+2025-07-14T15:26:33.868+07:00  INFO 17104 --- [ADN] [scheduling-1] c.g.A.controller.NotificationController  : 🕐 Bắt đầu cleanup notification hết hạn...
+2025-07-14T15:26:33.945+07:00  INFO 17104 --- [ADN] [scheduling-1] g.A.s.PasswordResetRequestCleanupService : [OTP] Không có OTP nào hết hạn cần xóa.
+2025-07-14T15:26:41.545+07:00  INFO 17104 --- [ADN] [http-nio-8080-exec-2] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-07-14T15:26:41.545+07:00  INFO 17104 --- [ADN] [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-07-14T15:26:41.546+07:00  INFO 17104 --- [ADN] [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2025-07-14T15:26:43.203+07:00  INFO 17104 --- [ADN] [http-nio-8080-exec-9] o.springdoc.api.AbstractOpenApiResource  : Init duration for springdoc-openapi is: 1335 ms
+2025-07-14T15:28:33.900+07:00  INFO 17104 --- [ADN] [scheduling-1] g.A.s.PasswordResetRequestCleanupService : [OTP] Không có OTP nào hết hạn cần xóa.
+2025-07-14T15:30:33.876+07:00  INFO 17104 --- [ADN] [scheduling-1] g.A.s.PasswordResetRequestCleanupService : [OTP] Không có OTP nào hết hạn cần xóa.
+2025-07-14T15:31:49.066+07:00  WARN 17104 --- [ADN] [http-nio-8080-exec-8] .w.s.m.s.DefaultHandlerExceptionResolver : Resolved [org.springframework.web.HttpRequestMethodNotSupportedException: Request method 'POST' is not supported]
+2025-07-14T15:32:33.883+07:00  INFO 17104 --- [ADN] [scheduling-1] g.A.s.PasswordResetRequestCleanupService : [OTP] Không có OTP nào hết hạn cần xóa.
+2025-07-14T15:34:33.874+07:00  INFO 17104 --- [ADN] [scheduling-1] g.A.s.PasswordResetRequestCleanupService : [OTP] Không có OTP nào hết hạn cần xóa.
+2025-07-14T15:36:33.901+07:00  INFO 17104 --- [ADN] [scheduling-1] g.A.s.PasswordResetRequestCleanupService : [OTP] Không có OTP nào hết hạn cần xóa.
+2025-07-14T15:38:33.870+07:00  INFO 17104 --- [ADN] [scheduling-1] g.A.s.PasswordResetRequestCleanupService : [OTP] Không có OTP nào hết hạn cần xóa.
+2025-07-14T15:39:42.791+07:00  INFO 17104 --- [ADN] [http-nio-8080-exec-3] c.group2.ADN.controller.AuthController   : User đăng ký mới: email=lmao@yopmail.com, fullName=Nguy?n
+2025-07-14T15:40:33.900+07:00  INFO 17104 --- [ADN] [scheduling-1] g.A.s.PasswordResetRequestCleanupService : [OTP] Không có OTP nào hết hạn cần xóa.
+2025-07-14T15:42:33.882+07:00  INFO 17104 --- [ADN] [scheduling-1] g.A.s.PasswordResetRequestCleanupService : [OTP] Không có OTP nào hết hạn cần xóa.
+2025-07-14T15:44:33.882+07:00  INFO 17104 --- [ADN] [scheduling-1] g.A.s.PasswordResetRequestCleanupService : [OTP] Không có OTP nào hết hạn cần xóa.
+2025-07-14T15:46:33.872+07:00  INFO 17104 --- [ADN] [scheduling-1] g.A.s.PasswordResetRequestCleanupService : [OTP] Không có OTP nào hết hạn cần xóa.
+2025-07-14T15:48:25.461+07:00  INFO 17104 --- [ADN] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-07-14T15:48:25.466+07:00  INFO 17104 --- [ADN] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-07-14T15:48:25.471+07:00  INFO 17104 --- [ADN] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-07-14T15:48:25.473+07:00  INFO 17104 --- [ADN] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-07-14T15:48:25.475+07:00  INFO 17104 --- [ADN] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-07-14T15:56:10.605+07:00  INFO 4724 --- [ADN] [main] com.group2.ADN.AdnApplication            : Starting AdnApplication using Java 24.0.1 with PID 4724 (C:\Users\Phuong Nguyen\Desktop\hello\SWP_Backend\target\classes started by Phuong Nguyen in C:\Users\Phuong Nguyen\Desktop\hello\SWP_Backend)
+2025-07-14T15:56:10.606+07:00 DEBUG 4724 --- [ADN] [main] com.group2.ADN.AdnApplication            : Running with Spring Boot v3.5.0, Spring v6.2.7
+2025-07-14T15:56:10.606+07:00  INFO 4724 --- [ADN] [main] com.group2.ADN.AdnApplication            : No active profile set, falling back to 1 default profile: "default"
+2025-07-14T15:56:11.123+07:00  INFO 4724 --- [ADN] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-07-14T15:56:11.172+07:00  INFO 4724 --- [ADN] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 42 ms. Found 9 JPA repository interfaces.
+2025-07-14T15:56:11.505+07:00  INFO 4724 --- [ADN] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-07-14T15:56:11.512+07:00  INFO 4724 --- [ADN] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-07-14T15:56:11.512+07:00  INFO 4724 --- [ADN] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.41]
+2025-07-14T15:56:11.551+07:00  INFO 4724 --- [ADN] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-07-14T15:56:11.552+07:00  INFO 4724 --- [ADN] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 911 ms
+2025-07-14T15:56:11.579+07:00 DEBUG 4724 --- [ADN] [main] c.g.A.security.JwtAuthenticationFilter   : Filter 'jwtAuthenticationFilter' configured for use
+2025-07-14T15:56:11.751+07:00  INFO 4724 --- [ADN] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-07-14T15:56:11.977+07:00  INFO 4724 --- [ADN] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection ConnectionID:1 ClientConnectionId: 5a5d8f63-f7d8-4a8e-8c67-546146a8db4c
+2025-07-14T15:56:11.978+07:00  INFO 4724 --- [ADN] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-07-14T15:56:12.008+07:00  INFO 4724 --- [ADN] [main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:sqlserver://localhost:1433;connectRetryInterval=10;connectRetryCount=1;maxResultBuffer=-1;sendTemporalDataTypesAsStringForBulkCopy=true;delayLoadingLobs=true;useFmtOnly=false;cacheBulkCopyMetadata=false;bulkCopyForBatchInsertAllowEncryptedValueModifications=false;bulkCopyForBatchInsertTableLock=false;bulkCopyForBatchInsertKeepNulls=false;bulkCopyForBatchInsertKeepIdentity=false;bulkCopyForBatchInsertFireTriggers=false;bulkCopyForBatchInsertCheckConstraints=false;bulkCopyForBatchInsertBatchSize=0;useBulkCopyForBatchInsert=false;cancelQueryTimeout=-1;sslProtocol=TLS;calcBigDecimalPrecision=false;useDefaultJaasConfig=false;jaasConfigurationName=SQLJDBCDriver;statementPoolingCacheSize=0;serverPreparedStatementDiscardThreshold=10;enablePrepareOnFirstPreparedStatementCall=false;fips=false;socketTimeout=0;authentication=NotSpecified;authenticationScheme=nativeAuthentication;xopenStates=false;datetimeParameterType=datetime2;sendTimeAsDatetime=true;replication=false;trustStoreType=JKS;trustServerCertificate=true;TransparentNetworkIPResolution=true;iPAddressPreference=IPv4First;serverNameAsACE=false;sendStringParametersAsUnicode=true;selectMethod=direct;responseBuffering=adaptive;queryTimeout=-1;packetSize=8000;multiSubnetFailover=false;loginTimeout=30;lockTimeout=-1;lastUpdateCount=true;useDefaultGSSCredential=false;prepareMethod=prepexec;encrypt=true;disableStatementPooling=true;databaseName=ADN_DB;columnEncryptionSetting=Disabled;applicationName=Microsoft JDBC Driver for SQL Server;applicationIntent=readwrite; (Microsoft SQL Server 16.0)
+2025-07-14T15:56:12.150+07:00  INFO 4724 --- [ADN] [main] o.f.core.internal.command.DbValidate     : Successfully validated 18 migrations (execution time 00:00.050s)
+2025-07-14T15:56:12.171+07:00  INFO 4724 --- [ADN] [main] o.f.core.internal.command.DbMigrate      : Current version of schema [dbo]: 27
+2025-07-14T15:56:12.177+07:00  INFO 4724 --- [ADN] [main] o.f.core.internal.command.DbMigrate      : Schema [dbo] is up to date. No migration necessary.
+2025-07-14T15:56:12.232+07:00  INFO 4724 --- [ADN] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-07-14T15:56:12.260+07:00  INFO 4724 --- [ADN] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.15.Final
+2025-07-14T15:56:12.277+07:00  INFO 4724 --- [ADN] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-07-14T15:56:12.470+07:00  INFO 4724 --- [ADN] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-07-14T15:56:12.494+07:00  WARN 4724 --- [ADN] [main] org.hibernate.orm.deprecation            : HHH90000025: SQLServer2012Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-07-14T15:56:12.494+07:00  WARN 4724 --- [ADN] [main] org.hibernate.orm.deprecation            : HHH90000026: SQLServer2012Dialect has been deprecated; use org.hibernate.dialect.SQLServerDialect instead
+2025-07-14T15:56:12.503+07:00  INFO 4724 --- [ADN] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 11.0
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-07-14T15:56:13.122+07:00  INFO 4724 --- [ADN] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-07-14T15:56:13.992+07:00  INFO 4724 --- [ADN] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-07-14T15:56:14.166+07:00  INFO 4724 --- [ADN] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-07-14T15:56:14.865+07:00  WARN 4724 --- [ADN] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-07-14T15:56:14.881+07:00  WARN 4724 --- [ADN] [main] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: e1281be1-1e87-4e93-8e40-2c9ca3f1d7ad
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-07-14T15:56:14.885+07:00  INFO 4724 --- [ADN] [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-07-14T15:56:15.269+07:00  INFO 4724 --- [ADN] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-07-14T15:56:15.276+07:00  INFO 4724 --- [ADN] [main] com.group2.ADN.AdnApplication            : Started AdnApplication in 4.963 seconds (process running for 5.383)
+2025-07-14T15:56:15.277+07:00  INFO 4724 --- [ADN] [scheduling-1] c.g.A.controller.NotificationController  : 🕐 Bắt đầu cleanup notification hết hạn...
+2025-07-14T15:56:15.354+07:00  INFO 4724 --- [ADN] [scheduling-1] g.A.s.PasswordResetRequestCleanupService : [OTP] Không có OTP nào hết hạn cần xóa.
+2025-07-14T15:56:59.620+07:00  INFO 4724 --- [ADN] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-07-14T15:56:59.626+07:00  INFO 4724 --- [ADN] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-07-14T15:56:59.631+07:00  INFO 4724 --- [ADN] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-07-14T15:56:59.633+07:00  INFO 4724 --- [ADN] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-07-14T15:56:59.635+07:00  INFO 4724 --- [ADN] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-07-14T15:57:29.475+07:00  INFO 9592 --- [ADN] [main] com.group2.ADN.AdnApplication            : Starting AdnApplication using Java 24.0.1 with PID 9592 (C:\Users\Phuong Nguyen\Desktop\hello\SWP_Backend\target\classes started by Phuong Nguyen in C:\Users\Phuong Nguyen\Desktop\hello\SWP_Backend)
+2025-07-14T15:57:29.476+07:00 DEBUG 9592 --- [ADN] [main] com.group2.ADN.AdnApplication            : Running with Spring Boot v3.5.0, Spring v6.2.7
+2025-07-14T15:57:29.477+07:00  INFO 9592 --- [ADN] [main] com.group2.ADN.AdnApplication            : No active profile set, falling back to 1 default profile: "default"
+2025-07-14T15:57:29.964+07:00  INFO 9592 --- [ADN] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-07-14T15:57:30.008+07:00  INFO 9592 --- [ADN] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 38 ms. Found 9 JPA repository interfaces.
+2025-07-14T15:57:30.352+07:00  INFO 9592 --- [ADN] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-07-14T15:57:30.360+07:00  INFO 9592 --- [ADN] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-07-14T15:57:30.360+07:00  INFO 9592 --- [ADN] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.41]
+2025-07-14T15:57:30.395+07:00  INFO 9592 --- [ADN] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-07-14T15:57:30.395+07:00  INFO 9592 --- [ADN] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 887 ms
+2025-07-14T15:57:30.424+07:00 DEBUG 9592 --- [ADN] [main] c.g.A.security.JwtAuthenticationFilter   : Filter 'jwtAuthenticationFilter' configured for use
+2025-07-14T15:57:30.576+07:00  INFO 9592 --- [ADN] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-07-14T15:57:30.782+07:00  INFO 9592 --- [ADN] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection ConnectionID:1 ClientConnectionId: f612e5d7-18b0-4dcc-b523-f136ede9a4a4
+2025-07-14T15:57:30.784+07:00  INFO 9592 --- [ADN] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-07-14T15:57:30.816+07:00  INFO 9592 --- [ADN] [main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:sqlserver://localhost:1433;connectRetryInterval=10;connectRetryCount=1;maxResultBuffer=-1;sendTemporalDataTypesAsStringForBulkCopy=true;delayLoadingLobs=true;useFmtOnly=false;cacheBulkCopyMetadata=false;bulkCopyForBatchInsertAllowEncryptedValueModifications=false;bulkCopyForBatchInsertTableLock=false;bulkCopyForBatchInsertKeepNulls=false;bulkCopyForBatchInsertKeepIdentity=false;bulkCopyForBatchInsertFireTriggers=false;bulkCopyForBatchInsertCheckConstraints=false;bulkCopyForBatchInsertBatchSize=0;useBulkCopyForBatchInsert=false;cancelQueryTimeout=-1;sslProtocol=TLS;calcBigDecimalPrecision=false;useDefaultJaasConfig=false;jaasConfigurationName=SQLJDBCDriver;statementPoolingCacheSize=0;serverPreparedStatementDiscardThreshold=10;enablePrepareOnFirstPreparedStatementCall=false;fips=false;socketTimeout=0;authentication=NotSpecified;authenticationScheme=nativeAuthentication;xopenStates=false;datetimeParameterType=datetime2;sendTimeAsDatetime=true;replication=false;trustStoreType=JKS;trustServerCertificate=true;TransparentNetworkIPResolution=true;iPAddressPreference=IPv4First;serverNameAsACE=false;sendStringParametersAsUnicode=true;selectMethod=direct;responseBuffering=adaptive;queryTimeout=-1;packetSize=8000;multiSubnetFailover=false;loginTimeout=30;lockTimeout=-1;lastUpdateCount=true;useDefaultGSSCredential=false;prepareMethod=prepexec;encrypt=true;disableStatementPooling=true;databaseName=ADN_DB;columnEncryptionSetting=Disabled;applicationName=Microsoft JDBC Driver for SQL Server;applicationIntent=readwrite; (Microsoft SQL Server 16.0)
+2025-07-14T15:57:30.933+07:00  INFO 9592 --- [ADN] [main] o.f.core.internal.command.DbValidate     : Successfully validated 18 migrations (execution time 00:00.044s)
+2025-07-14T15:57:30.945+07:00  INFO 9592 --- [ADN] [main] o.f.core.internal.command.DbMigrate      : Current version of schema [dbo]: 27
+2025-07-14T15:57:30.949+07:00  INFO 9592 --- [ADN] [main] o.f.core.internal.command.DbMigrate      : Schema [dbo] is up to date. No migration necessary.
+2025-07-14T15:57:30.996+07:00  INFO 9592 --- [ADN] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-07-14T15:57:31.024+07:00  INFO 9592 --- [ADN] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.15.Final
+2025-07-14T15:57:31.045+07:00  INFO 9592 --- [ADN] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-07-14T15:57:31.199+07:00  INFO 9592 --- [ADN] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-07-14T15:57:31.222+07:00  WARN 9592 --- [ADN] [main] org.hibernate.orm.deprecation            : HHH90000025: SQLServer2012Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-07-14T15:57:31.223+07:00  WARN 9592 --- [ADN] [main] org.hibernate.orm.deprecation            : HHH90000026: SQLServer2012Dialect has been deprecated; use org.hibernate.dialect.SQLServerDialect instead
+2025-07-14T15:57:31.232+07:00  INFO 9592 --- [ADN] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 11.0
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-07-14T15:57:31.822+07:00  INFO 9592 --- [ADN] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-07-14T15:57:32.658+07:00  INFO 9592 --- [ADN] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-07-14T15:57:32.834+07:00  INFO 9592 --- [ADN] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-07-14T15:57:33.529+07:00  WARN 9592 --- [ADN] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-07-14T15:57:33.546+07:00  WARN 9592 --- [ADN] [main] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 304516b1-d1d8-4a40-9333-978ffdb3e82d
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-07-14T15:57:33.550+07:00  INFO 9592 --- [ADN] [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-07-14T15:57:33.920+07:00  INFO 9592 --- [ADN] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-07-14T15:57:33.927+07:00  INFO 9592 --- [ADN] [main] com.group2.ADN.AdnApplication            : Started AdnApplication in 4.753 seconds (process running for 5.171)
+2025-07-14T15:57:33.930+07:00  INFO 9592 --- [ADN] [scheduling-1] c.g.A.controller.NotificationController  : 🕐 Bắt đầu cleanup notification hết hạn...
+2025-07-14T15:57:34.005+07:00  INFO 9592 --- [ADN] [scheduling-1] g.A.s.PasswordResetRequestCleanupService : [OTP] Không có OTP nào hết hạn cần xóa.
+2025-07-14T15:57:45.939+07:00  INFO 9592 --- [ADN] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-07-14T15:57:45.944+07:00  INFO 9592 --- [ADN] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-07-14T15:57:45.948+07:00  INFO 9592 --- [ADN] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-07-14T15:57:45.950+07:00  INFO 9592 --- [ADN] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-07-14T15:57:45.952+07:00  INFO 9592 --- [ADN] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.

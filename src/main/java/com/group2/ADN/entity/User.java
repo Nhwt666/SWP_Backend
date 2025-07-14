@@ -19,7 +19,7 @@ public class User {
     @Column(name = "user_id")
     private Long id;
 
-    @Column(name = "full_name", nullable = false)
+    @Column(name = "full_name", nullable = false, columnDefinition = "NVARCHAR(50)")
     private String fullName;
 
     @Column(nullable = false, unique = true)

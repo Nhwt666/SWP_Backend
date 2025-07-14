@@ -76,11 +76,7 @@ public class TicketController {
         return ResponseEntity.ok(ticketUpdated);
     }
 
-    @PutMapping("/{id}/complete")
-    public ResponseEntity<Ticket> completeTicket(@PathVariable Long id, @RequestBody String result) {
-        Ticket ticketUpdated = ticketService.completeTicket(id, result);
-        return ResponseEntity.ok(ticketUpdated);
-    }
+
 
     @GetMapping("/customer/{customerId}")
     public ResponseEntity<List<Ticket>> getTicketsByCustomer(@PathVariable Long customerId) {
@@ -134,39 +130,4 @@ public class TicketController {
             "methods", Arrays.stream(TestMethod.values()).map(Enum::name).collect(Collectors.toList())
         ));
     }
-
-//    @PostMapping("/{id}/result")
-//    public ResponseEntity<?> uploadResult(@PathVariable Long id, @RequestParam("file") org.springframework.web.multipart.MultipartFile file) {
-//        return ticketService.uploadResult(id, file);
-//    }
-
-/*    @PostMapping
-    public ResponseEntity<?> createTicket(@RequestBody TicketRequest request) {
-        try {
-            System.out.println("🔍 DEBUG: createTicket");
-            System.out.println("   Request type: " + request.getType());
-            System.out.println("   Request method: " + request.getMethod());
-            System.out.println("   Request status: " + request.getStatus());
-
-            Ticket ticketCreated = ticketService.createTicketFromRequest(request);
-
-            System.out.println("   🎯 Final ticket status: " + ticketCreated.getStatus());
-            System.out.println("   🎯 Final ticket ID: " + ticketCreated.getId());
-
-            return ResponseEntity.ok(Map.of(
-                    "message", "Ticket created successfully",
-                    "ticketId", ticketCreated.getId(),
-                    "status", ticketCreated.getStatus(),
-                    "type", ticketCreated.getType(),
-                    "method", ticketCreated.getMethod()
-            ));
-        } catch (Exception e) {
-            System.err.println("❌ ERROR in createTicket: " + e.getMessage());
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
-                    "error", "Internal server error",
-                    "message", "An unexpected error occurred while creating the ticket"
-            ));
-        }
-    }*/
 }

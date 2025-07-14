@@ -45,10 +45,6 @@ public class Ticket {
     @JoinColumn(name = "staff_id")
     private User staff;  // Nullable until assigned
 
-    @OneToOne
-    @JoinColumn(name = "result_id")
-    @JsonManagedReference
-    private Result result;
 
     @Column(length = 255)
     private String address;
