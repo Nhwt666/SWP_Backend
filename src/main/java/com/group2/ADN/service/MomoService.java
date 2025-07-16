@@ -54,7 +54,6 @@ public class MomoService {
         if (authentication != null) {
             String email = authentication.getName();
             userId = userRepository.findByEmail(email).map(u -> u.getId()).orElse(null);
-            System.out.println("DEBUG email: " + email + ", userId: " + userId);
         }
 
         // Lưu lịch sử nạp tiền với trạng thái chờ xác nhận
@@ -69,9 +68,7 @@ public class MomoService {
             history.setStatus("PENDING");
             // Generate payerId từ userId
             history.setPayerId(generatePayerId(finalUserId));
-            System.out.println("userId: " + finalUserId + ", orderId: " + orderId + ", amount: " + amount + ", payerId: " + history.getPayerId());
             topUpHistoryRepository.save(history);
-            System.out.println("Đã lưu topup_history cho MoMo!");
         }
 
         // Tạo raw signature string

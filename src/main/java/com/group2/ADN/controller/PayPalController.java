@@ -97,10 +97,6 @@ public class PayPalController {
                         @RequestParam double amount,
                         HttpServletResponse response) throws IOException {
         try {
-            System.out.println("✅ PayPal SUCCESS callback!");
-            System.out.println("👉 PaymentID: " + paymentId);
-            System.out.println("👉 PayerID: " + payerId);
-            System.out.println("👉 UserID: " + userId + ", Amount: " + amount);
 
             payPalService.executePayment(paymentId, payerId);
             TopUpHistory history = topUpHistoryRepository.findByPaymentId(paymentId).orElse(null);
@@ -114,7 +110,6 @@ public class PayPalController {
             BigDecimal exchangeRate = new BigDecimal("26000");
             BigDecimal vndAmount = usdAmount.multiply(exchangeRate);
             userService.topUpWallet(userId, vndAmount, "PAYPAL");
-            System.out.println("💾 Lưu lịch sử nạp tiền thành công!");
 
             response.sendRedirect("http://localhost:4321/payment-success?method=paypal");
         } catch (PayPalRESTException e) {
