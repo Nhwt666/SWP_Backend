@@ -21,6 +21,9 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     // Lấy notification theo ticket
     List<Notification> findByTicketIdAndIsReadFalse(Long ticketId);
     
+    // Lấy notification chưa đọc theo ticket và cũ hơn 1 ngày
+    List<Notification> findByTicketIdAndIsReadFalseAndCreatedAtBefore(Long ticketId, java.time.LocalDateTime cutoff);
+    
     // Lấy notification hết hạn
     List<Notification> findByExpiresAtBefore(LocalDateTime dateTime);
     

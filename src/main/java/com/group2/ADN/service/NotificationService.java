@@ -89,11 +89,12 @@ public class NotificationService {
 
     @Transactional
     public void deleteOldNotifications(Long ticketId) {
-        List<Notification> oldNotifications = notificationRepository.findByTicketIdAndIsReadFalse(ticketId);
+        LocalDateTime cutoff = LocalDateTime.now().minusDays(1);
+        List<Notification> oldNotifications = notificationRepository.findByTicketIdAndIsReadFalseAndCreatedAtBefore(ticketId, cutoff);
         
         if (!oldNotifications.isEmpty()) {
             notificationRepository.deleteAll(oldNotifications);
-            log.info("🗑️ Xóa {} notification cũ cho ticket #{}", oldNotifications.size(), ticketId);
+            log.info("🗑️ Xóa {} notification cũ (hơn 1 ngày) cho ticket #{}", oldNotifications.size(), ticketId);
         }
     }
 
