@@ -352,7 +352,7 @@ public class AdminController {
         private String status;
     }
 
-    // API: Lấy toàn bộ lịch sử nạp tiền (PayPal + Momo) cho admin, trả về thông tin user và phương thức đẹp
+    // API: Lấy toàn bộ lịch sử nạp tiền (PayPal + VNPay) cho admin, trả về thông tin user và phương thức đẹp
     @GetMapping("/topup-history")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<TopUpHistoryAdminDTO>> getAllTopUpHistory() {
