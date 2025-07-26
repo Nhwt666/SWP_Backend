@@ -28,7 +28,8 @@
                                     "/swagger-resources/**",
                                     "/webjars/**",
                                     "/api/paypal/**", // Cho phép public
-                                    "/api/prices/**" // Allow public access to price endpoint
+                                    "/api/prices/**", // Allow public access to price endpoint
+                                    "/api/blogs/**"   // Allow public access to blog endpoint
                             ).permitAll()
 
                             // Admin Access
