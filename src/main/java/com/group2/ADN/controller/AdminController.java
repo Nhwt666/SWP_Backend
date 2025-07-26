@@ -21,9 +21,13 @@ import com.group2.ADN.dto.UserWithTicketStatsDto;
 import org.springframework.security.core.Authentication;
 import org.springframework.http.HttpStatus;
 import com.group2.ADN.dto.AdminRejectTicketRequest;
+import com.group2.ADN.dto.AdminCreatePriceRequest;
+import com.group2.ADN.dto.AdminUpdatePriceRequest;
 import com.group2.ADN.service.ReviewService;
+import com.group2.ADN.service.PriceService;
 import com.group2.ADN.dto.ReviewDTO;
 import com.group2.ADN.entity.TopUpHistory;
+import com.group2.ADN.entity.Price;
 import com.group2.ADN.repository.TopUpHistoryRepository;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +52,7 @@ public class AdminController {
     private final UserService userService;
     private final ReviewService reviewService;
     private final TopUpHistoryRepository topUpHistoryRepository;
+    private final PriceService priceService;
 
     // ✅ Kiểm tra phân quyền admin
     @GetMapping("/Test_Phan_Quyen")
@@ -368,5 +373,36 @@ public class AdminController {
             );
         }).toList();
         return ResponseEntity.ok(result);
+    }
+
+    // Price Management Endpoints
+    @GetMapping("/prices")
+    public ResponseEntity<List<Price>> getAllPrices() {
+        List<Price> prices = priceService.getAllPrices();
+        return ResponseEntity.ok(prices);
+    }
+
+    @PostMapping("/prices")
+    public ResponseEntity<Price> createPrice(@RequestBody AdminCreatePriceRequest request) {
+        Price newPrice = priceService.createPrice(request);
+        return ResponseEntity.status(201).body(newPrice);
+    }
+
+    @PutMapping("/prices/{id}")
+    public ResponseEntity<Price> updatePrice(@PathVariable Long id, @RequestBody AdminUpdatePriceRequest request) {
+        Price updatedPrice = priceService.updatePrice(id, request);
+        return ResponseEntity.ok(updatedPrice);
+    }
+
+    @DeleteMapping("/prices/{id}")
+    public ResponseEntity<Void> deletePrice(@PathVariable Long id) {
+        priceService.deletePrice(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/prices/{id}")
+    public ResponseEntity<Price> getPriceById(@PathVariable Long id) {
+        Price price = priceService.getPriceById(id);
+        return ResponseEntity.ok(price);
     }
 }

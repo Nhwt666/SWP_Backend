@@ -20,6 +20,10 @@ public class Price {
     @Column(nullable = false, columnDefinition = "NVARCHAR(255)")
     private String name;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PriceType type;
+
     @Column(nullable = false, updatable = false)
     private Timestamp createdAt;
 
@@ -27,10 +31,11 @@ public class Price {
         // Constructor for Price entity
     }
 
-    public Price(BigDecimal value, String currency, String name) {
+    public Price(BigDecimal value, String currency, String name, PriceType type) {
         this.value = value;
         this.currency = currency;
         this.name = name;
+        this.type = type;
     }
 
     @PrePersist
@@ -50,6 +55,9 @@ public class Price {
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
+
+    public PriceType getType() { return type; }
+    public void setType(PriceType type) { this.type = type; }
 
     public Timestamp getCreatedAt() { return createdAt; }
     public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
