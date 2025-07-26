@@ -24,4 +24,19 @@ public class BlogService {
         return blogRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Blog not found"));
     }
+
+    public void deleteBlog(Long id) {
+        if (!blogRepository.existsById(id)) {
+            throw new RuntimeException("Blog not found");
+        }
+        blogRepository.deleteById(id);
+    }
+
+    public Blog updateBlog(Long id, Blog blog) {
+        Blog existing = getBlogById(id);
+        existing.setTitle(blog.getTitle());
+        existing.setContent(blog.getContent());
+        existing.setImageUrl(blog.getImageUrl());
+        return blogRepository.save(existing);
+    }
 } 
