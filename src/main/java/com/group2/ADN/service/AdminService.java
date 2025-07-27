@@ -25,22 +25,22 @@ public class AdminService {
         List<Map<String, Object>> statsByMethod = topUpHistoryRepository.getDepositStatsByPaymentMethod();
         BigDecimal totalDeposits = topUpHistoryRepository.getTotalSuccessfulDeposit();
 
-        BigDecimal momoTotal = BigDecimal.ZERO;
         BigDecimal paypalTotal = BigDecimal.ZERO;
+        BigDecimal vnpayTotal = BigDecimal.ZERO;
 
         for (Map<String, Object> stat : statsByMethod) {
             String method = (String) stat.get("paymentMethod");
             BigDecimal amount = (BigDecimal) stat.get("totalAmount");
-            if ("MOMO".equalsIgnoreCase(method)) {
-                momoTotal = amount;
-            } else if ("PAYPAL".equalsIgnoreCase(method)) {
+            if ("PAYPAL".equalsIgnoreCase(method)) {
                 paypalTotal = amount;
+            } else if ("VNPAY".equalsIgnoreCase(method)) {
+                vnpayTotal = amount;
             }
         }
 
         stats.put("totalDeposits", totalDeposits != null ? totalDeposits : BigDecimal.ZERO);
-        stats.put("momoTotal", momoTotal);
         stats.put("paypalTotal", paypalTotal);
+        stats.put("vnpayTotal", vnpayTotal);
 
         return stats;
     }

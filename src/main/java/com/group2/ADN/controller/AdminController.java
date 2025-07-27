@@ -37,6 +37,8 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.math.BigDecimal;
 
 @RestController
@@ -81,6 +83,98 @@ public class AdminController {
     @GetMapping("/deposits/stats")
     public ResponseEntity<Map<String, Object>> getDepositStats() {
         return ResponseEntity.ok(adminService.getDepositStatistics());
+    }
+
+    // Wallet Summary cho tất cả user
+    @GetMapping("/wallet/summary")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> getWalletSummary() {
+        List<User> users = userRepository.findAll();
+        List<Map<String, Object>> result = new ArrayList<>();
+        
+        for (User user : users) {
+            BigDecimal totalDeposit = topUpHistoryRepository.getTotalUserDeposit(user.getId());
+            BigDecimal totalTestAmount = ticketService.getTotalSpentOnTests(user.getId());
+            
+            Map<String, Object> userStats = new HashMap<>();
+            userStats.put("userId", user.getId());
+            userStats.put("userName", user.getFullName());
+            userStats.put("userEmail", user.getEmail());
+            userStats.put("totalDeposit", totalDeposit != null ? totalDeposit : BigDecimal.ZERO);
+            userStats.put("totalTestAmount", totalTestAmount != null ? totalTestAmount : BigDecimal.ZERO);
+            userStats.put("currentBalance", user.getWalletBalance());
+            
+            result.add(userStats);
+        }
+        
+        return ResponseEntity.ok(result);
+    }
+
+    // Deposit Stats cho tất cả user
+    @GetMapping("/wallet/deposit-stats")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> getAllUsersDepositStats() {
+        List<User> users = userRepository.findAll();
+        List<Map<String, Object>> result = new ArrayList<>();
+        
+        for (User user : users) {
+            List<TopUpHistory> history = topUpHistoryRepository.findByUserId(user.getId());
+            
+            BigDecimal paypalTotal = BigDecimal.ZERO;
+            BigDecimal vnpayTotal = BigDecimal.ZERO;
+            
+            for (TopUpHistory h : history) {
+                if ("SUCCESS".equals(h.getStatus())) {
+                    if ("PAYPAL".equals(h.getPaymentMethod())) {
+                        paypalTotal = paypalTotal.add(h.getAmount());
+                    } else if ("VNPAY".equals(h.getPaymentMethod())) {
+                        vnpayTotal = vnpayTotal.add(h.getAmount());
+                    }
+                }
+            }
+            
+            BigDecimal totalDeposit = paypalTotal.add(vnpayTotal);
+            
+            Map<String, Object> userStats = new HashMap<>();
+            userStats.put("userId", user.getId());
+            userStats.put("userName", user.getFullName());
+            userStats.put("userEmail", user.getEmail());
+            userStats.put("totalDeposit", totalDeposit);
+            userStats.put("paypalTotal", paypalTotal);
+            userStats.put("vnpayTotal", vnpayTotal);
+            
+            result.add(userStats);
+        }
+        
+        return ResponseEntity.ok(result);
+    }
+
+    // Top-up History cho tất cả user
+    @GetMapping("/wallet/topup-history")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> getTopUpHistory() {
+        List<TopUpHistory> historyList = topUpHistoryRepository.findAll();
+        List<Map<String, Object>> result = new ArrayList<>();
+        
+        for (TopUpHistory h : historyList) {
+            User user = userRepository.findById(h.getUserId()).orElse(null);
+            
+            Map<String, Object> historyItem = new HashMap<>();
+            historyItem.put("id", h.getId());
+            historyItem.put("userId", h.getUserId());
+            historyItem.put("userName", user != null ? user.getFullName() : "Unknown");
+            historyItem.put("userEmail", user != null ? user.getEmail() : "Unknown");
+            historyItem.put("amount", h.getAmount());
+            historyItem.put("paymentMethod", h.getPaymentMethod());
+            historyItem.put("paymentId", h.getPaymentId());
+            historyItem.put("payerId", h.getPayerId());
+            historyItem.put("status", h.getStatus());
+            historyItem.put("createdAt", h.getCreatedAt());
+            
+            result.add(historyItem);
+        }
+        
+        return ResponseEntity.ok(result);
     }
 
     // ✅ Tạo tài khoản nhân viên
@@ -352,7 +446,7 @@ public class AdminController {
         private String status;
     }
 
-    // API: Lấy toàn bộ lịch sử nạp tiền (PayPal + Momo) cho admin, trả về thông tin user và phương thức đẹp
+    // API: Lấy toàn bộ lịch sử nạp tiền (PayPal + VNPay) cho admin, trả về thông tin user và phương thức đẹp
     @GetMapping("/topup-history")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<TopUpHistoryAdminDTO>> getAllTopUpHistory() {
