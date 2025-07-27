@@ -28,14 +28,10 @@
                                     "/swagger-resources/**",
                                     "/webjars/**",
                                     "/api/paypal/**", // Cho phép public
-                                    "/api/prices/**" // Allow public access to price endpoint
+                                    "/api/vnpay/success/**", // Cho phép public cho success url từ VNPay
+                                    "/api/prices/**", // Allow public access to price endpoint
+                                    "/api/blogs/**"   // Allow public access to blog endpoint
                             ).permitAll()
-
-                            // Blog endpoints
-                            .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/blogs/**").permitAll()
-                            .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/blogs/**").hasRole("ADMIN")
-                            .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/blogs/**").hasRole("ADMIN")
-                            .requestMatchers(org.springframework.http.HttpMethod.PUT, "/api/blogs/**").hasRole("ADMIN")
 
                             // Admin Access
                             .requestMatchers("/admin/**").hasRole("ADMIN")
