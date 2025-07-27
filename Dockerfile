@@ -1,27 +1,20 @@
-FROM eclipse-temurin:24-jdk-alpine
+FROM eclipse-temurin:24-jdk
 
-# Thiết lập thư mục làm việc trong container
 WORKDIR /app
 
-# Sao chép pom.xml trước để tận dụng cache của Docker
 COPY pom.xml .
 COPY mvnw .
 COPY .mvn .mvn
-
-# Cấp quyền thực thi cho file mvnw
 RUN chmod +x ./mvnw
-
-# Tải các dependencies
 RUN ./mvnw dependency:go-offline -B
 
-# Sao chép mã nguồn
 COPY src ./src
+COPY scripts ./scripts  # nếu bạn cần
 
-# Build ứng dụng
 RUN ./mvnw package -DskipTests
 
-# Mở cổng 8080
-EXPOSE 8080
+# In ra file JAR để chắc chắn tồn tại
+RUN ls -lah target
 
-# Chạy ứng dụng (sử dụng wildcard để tự động tìm file JAR)
-CMD java -jar target/*.jar
+# Dùng tên JAR chính xác thay vì wildcard
+CMD ["java", "-jar", "target/BE_Final_V2-0.0.1-SNAPSHOT.jar"]
