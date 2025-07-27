@@ -147,7 +147,7 @@ public class UserService {
      */
     @Transactional
     public void topUpWallet(Long userId, BigDecimal amount, String paymentMethod) {
-        log.info("🔁 Top-up requested: userId = {}, amount = {}", userId, amount);
+        log.info("🔁 Top-up requested: userId = {}, amount = {}, paymentMethod = {}", userId, amount, paymentMethod);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -159,6 +159,6 @@ public class UserService {
         user.setWalletBalance(currentBalance.add(amount));
         userRepository.save(user);
 
-        log.info(" Wallet new balance: {}", user.getWalletBalance());
+        log.info("✅ {} payment successful - Wallet new balance: {}", paymentMethod, user.getWalletBalance());
     }
 }

@@ -19,6 +19,8 @@ import org.slf4j.LoggerFactory;
 
 import com.group2.ADN.dto.TicketFeedbackRequest;
 
+import java.math.BigDecimal;
+
 @Service
 @Transactional
 public class TicketService {
@@ -485,6 +487,13 @@ public class TicketService {
         Ticket savedTicket = saveTicket(ticket);
         log.info("[TICKET] Ticket created successfully. Ticket ID: {}, Status: {}", savedTicket.getId(), savedTicket.getStatus());
         return savedTicket;
+    }
+
+    /**
+     * Lấy tổng tiền đã chi cho xét nghiệm của một người dùng
+     */
+    public BigDecimal getTotalSpentOnTests(Long userId) {
+        return ticketRepository.sumTotalPriceByUserId(userId);
     }
 }
 

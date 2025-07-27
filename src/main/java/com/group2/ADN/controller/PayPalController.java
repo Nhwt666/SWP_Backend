@@ -101,6 +101,12 @@ public class PayPalController {
             payPalService.executePayment(paymentId, payerId);
             TopUpHistory history = topUpHistoryRepository.findByPaymentId(paymentId).orElse(null);
             if (history != null) {
+                // Kiểm tra xem đã xử lý chưa để tránh duplicate
+                if ("SUCCESS".equals(history.getStatus())) {
+                    response.sendRedirect("http://localhost:4322/payment-success?method=paypal");
+                    return;
+                }
+                
                 history.setStatus("SUCCESS");
                 history.setPayerId(payerId);
                 topUpHistoryRepository.save(history);
@@ -109,9 +115,10 @@ public class PayPalController {
             BigDecimal usdAmount = BigDecimal.valueOf(amount);
             BigDecimal exchangeRate = new BigDecimal("26000");
             BigDecimal vndAmount = usdAmount.multiply(exchangeRate);
+            System.out.println("PayPal payment successful - Adding " + vndAmount + " to user " + userId);
             userService.topUpWallet(userId, vndAmount, "PAYPAL");
 
-            response.sendRedirect("http://localhost:4321/payment-success?method=paypal");
+            response.sendRedirect("http://localhost:4322/payment-success?method=paypal");
         } catch (PayPalRESTException e) {
             e.printStackTrace();
             response.sendRedirect("http://localhost:4322/payment-failed");

@@ -3,6 +3,7 @@ package com.group2.ADN.repository;
 import com.group2.ADN.entity.TopUpHistory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -23,4 +24,9 @@ public interface TopUpHistoryRepository extends JpaRepository<TopUpHistory, Long
             "FROM TopUpHistory t " +
             "WHERE t.status = 'SUCCESS'")
     BigDecimal getTotalSuccessfulDeposit();
+    
+    @Query("SELECT SUM(t.amount) " +
+            "FROM TopUpHistory t " +
+            "WHERE t.status = 'SUCCESS' AND t.userId = :userId")
+    BigDecimal getTotalUserDeposit(@Param("userId") Long userId);
 }
