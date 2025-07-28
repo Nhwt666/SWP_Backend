@@ -17,7 +17,7 @@ public class UpdateProfileRequest {
     @Pattern(regexp = "^[A-Za-zÀ-Ỵà-ỹ\\s]+$", message = "Họ tên chỉ được chứa chữ cái và dấu cách")
     private String fullName;
 
-    @Pattern(regexp = "^0\\d{9}$", message = "Số điện thoại không hợp lệ (ví dụ: 0912345678)")
+    @Pattern(regexp = "^0\\d{9}$", message = "Số điện thoại không hợp lệ")
     private String phone;
 
     @Size(min = 5, max = 100, message = "Địa chỉ phải từ 5 đến 100 ký tự")

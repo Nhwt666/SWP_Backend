@@ -16,7 +16,7 @@ public class PendingRegisterRequest {
     private String email;
 
     @NotBlank(message = "Số điện thoại không được để trống")
-    @Pattern(regexp = "^(0[0-9]{9})$", message = "Số điện thoại không hợp lệ (ví dụ: 0912345678)")
+    @Pattern(regexp = "^(0[0-9]{9})$", message = "Số điện thoại không hợp lệ")
     private String phone;
 
     @NotBlank(message = "Mật khẩu không được để trống")

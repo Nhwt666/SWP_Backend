@@ -57,7 +57,7 @@ public class AuthController {
                 })
                 .orElseGet(() -> {
                     Map<String, Object> error = new HashMap<>();
-                    error.put("error", "Invalid credentials");
+                    error.put("error", "Tài khoản hoặc mật khẩu không đúng");
                     return ResponseEntity.status(401).body(error);
                 });
     }
