@@ -7,6 +7,7 @@ import com.group2.ADN.entity.Ticket;
 import com.group2.ADN.service.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
 @RequestMapping("/staff")
@@ -15,13 +16,13 @@ public class StaffController {
     @Autowired
     private TicketService ticketService;
 
-    // ✅ API kiểm tra phân quyền staff
+    @PreAuthorize("hasRole('STAFF')")
     @GetMapping("/Test_Phan_Quyen")
     public ResponseEntity<String> helloStaff() {
         return ResponseEntity.ok("Hello, Staff!");
     }
 
-    // ✅ (Tùy chọn) API mẫu để trả về thông tin dashboard giả lập
+    @PreAuthorize("hasRole('STAFF')")
     @GetMapping("/dashboard-info")
     public ResponseEntity<?> getDashboardInfo() {
         return ResponseEntity.ok(
@@ -33,6 +34,7 @@ public class StaffController {
         );
     }
 
+    @PreAuthorize("hasRole('STAFF')")
     @PutMapping("/{id}/complete")
     public ResponseEntity<Ticket> completeTicket(@PathVariable Long id, @RequestBody String result) {
         Ticket ticketUpdated = ticketService.completeTicket(id, result);

@@ -35,10 +35,10 @@
 
                             // Admin Access
                             .requestMatchers("/admin/**").hasRole("ADMIN")
+                            .requestMatchers("/staff/**").hasRole("STAFF")
 
                             // Role-based access - Allow CUSTOMER, STAFF, ADMIN for ticket operations
                             .requestMatchers("/customer/**").hasRole("CUSTOMER")
-                            .requestMatchers("/staff/**").hasRole("STAFF")
                             .requestMatchers("/notifications/**").hasRole("CUSTOMER")
                             .requestMatchers("/admin/reviews").hasRole("ADMIN")
                             .requestMatchers("/admin/tickets-with-feedback").hasRole("ADMIN")

@@ -58,13 +58,13 @@ public class AdminController {
     private final TopUpHistoryRepository topUpHistoryRepository;
     private final PriceService priceService;
 
-    // ✅ Kiểm tra phân quyền admin
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/Test_Phan_Quyen")
     public ResponseEntity<String> helloAdmin() {
         return ResponseEntity.ok("Hello, Admin!");
     }
 
-    // ✅ Thống kê user, ticket, feedback (nếu có)
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/stats")
     public ResponseEntity<Map<String, Object>> getStats() {
         long totalUsers = userRepository.count();
@@ -82,14 +82,14 @@ public class AdminController {
         return ResponseEntity.ok(data);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/deposits/stats")
     public ResponseEntity<Map<String, Object>> getDepositStats() {
         return ResponseEntity.ok(adminService.getDepositStatistics());
     }
 
-    // Wallet Summary cho tất cả user
-    @GetMapping("/wallet/summary")
     @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/wallet/summary")
     public ResponseEntity<?> getWalletSummary() {
         List<User> users = userRepository.findAll();
         List<Map<String, Object>> result = new ArrayList<>();
@@ -112,9 +112,8 @@ public class AdminController {
         return ResponseEntity.ok(result);
     }
 
-    // Deposit Stats cho tất cả user
-    @GetMapping("/wallet/deposit-stats")
     @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/wallet/deposit-stats")
     public ResponseEntity<?> getAllUsersDepositStats() {
         List<User> users = userRepository.findAll();
         List<Map<String, Object>> result = new ArrayList<>();
@@ -151,9 +150,8 @@ public class AdminController {
         return ResponseEntity.ok(result);
     }
 
-    // Top-up History cho tất cả user
-    @GetMapping("/wallet/topup-history")
     @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/wallet/topup-history")
     public ResponseEntity<?> getTopUpHistory() {
         List<TopUpHistory> historyList = topUpHistoryRepository.findAll();
         List<Map<String, Object>> result = new ArrayList<>();
@@ -472,12 +470,14 @@ public class AdminController {
     }
 
     // Price Management Endpoints
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/prices")
     public ResponseEntity<List<Price>> getAllPrices() {
         List<Price> prices = priceService.getAllPrices();
         return ResponseEntity.ok(prices);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/prices")
     public ResponseEntity<?> createPrice(@Valid @RequestBody AdminCreatePriceRequest request, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -488,6 +488,7 @@ public class AdminController {
         return ResponseEntity.status(201).body(newPrice);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/prices/{id}")
     public ResponseEntity<?> updatePrice(@PathVariable Long id, @Valid @RequestBody AdminUpdatePriceRequest request, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -498,12 +499,14 @@ public class AdminController {
         return ResponseEntity.ok(updatedPrice);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/prices/{id}")
     public ResponseEntity<Void> deletePrice(@PathVariable Long id) {
         priceService.deletePrice(id);
         return ResponseEntity.noContent().build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/prices/{id}")
     public ResponseEntity<Price> getPriceById(@PathVariable Long id) {
         Price price = priceService.getPriceById(id);
