@@ -2,6 +2,7 @@ package com.group2.ADN.controller;
 
 import com.group2.ADN.entity.Blog;
 import com.group2.ADN.service.BlogService;
+import com.group2.ADN.service.ImgBBService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -10,9 +11,6 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.MediaType;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
 import java.util.Map;
 
 @RestController
@@ -20,6 +18,9 @@ import java.util.Map;
 public class BlogController {
     @Autowired
     private BlogService blogService;
+    
+    @Autowired
+    private ImgBBService imgBBService;
 
     @GetMapping
     public List<Blog> getAllBlogs() {
@@ -40,14 +41,20 @@ public class BlogController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = "/upload-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Map<String, String>> uploadImageToCatbox(@RequestParam("file") MultipartFile file) {
-        String catboxUrl = "https://catbox.moe/user/api.php";
-        RestTemplate restTemplate = new RestTemplate();
-        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-        body.add("reqtype", "fileupload");
-        body.add("fileToUpload", file.getResource());
-        String url = restTemplate.postForObject(catboxUrl, body, String.class);
-        return ResponseEntity.ok(Map.of("url", url != null ? url.trim() : ""));
+    public ResponseEntity<Map<String, String>> uploadImageToImgBB(@RequestParam("file") MultipartFile file) {
+        try {
+            // Validate file
+            if (!imgBBService.isValidImageFile(file)) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Invalid image file"));
+            }
+            
+            // Upload image to ImgBB
+            String imageUrl = imgBBService.uploadImage(file);
+            return ResponseEntity.ok(Map.of("url", imageUrl));
+            
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Error uploading image: " + e.getMessage()));
+        }
     }
 
     @PreAuthorize("hasRole('ADMIN')")
