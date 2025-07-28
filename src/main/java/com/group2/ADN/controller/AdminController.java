@@ -34,6 +34,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import jakarta.validation.Valid;
+import org.springframework.validation.BindingResult;
 
 import java.util.List;
 import java.util.Map;
@@ -477,13 +479,21 @@ public class AdminController {
     }
 
     @PostMapping("/prices")
-    public ResponseEntity<Price> createPrice(@RequestBody AdminCreatePriceRequest request) {
+    public ResponseEntity<?> createPrice(@Valid @RequestBody AdminCreatePriceRequest request, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            String errorMsg = bindingResult.getAllErrors().get(0).getDefaultMessage();
+            return ResponseEntity.badRequest().body(java.util.Map.of("error", errorMsg));
+        }
         Price newPrice = priceService.createPrice(request);
         return ResponseEntity.status(201).body(newPrice);
     }
 
     @PutMapping("/prices/{id}")
-    public ResponseEntity<Price> updatePrice(@PathVariable Long id, @RequestBody AdminUpdatePriceRequest request) {
+    public ResponseEntity<?> updatePrice(@PathVariable Long id, @Valid @RequestBody AdminUpdatePriceRequest request, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            String errorMsg = bindingResult.getAllErrors().get(0).getDefaultMessage();
+            return ResponseEntity.badRequest().body(java.util.Map.of("error", errorMsg));
+        }
         Price updatedPrice = priceService.updatePrice(id, request);
         return ResponseEntity.ok(updatedPrice);
     }
